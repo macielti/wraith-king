@@ -12,6 +12,23 @@ able to check the stack-trace from the root cause for the message not being cons
 want to replay the message and the consumer service will try to process it one more time. We should have in mind that
 when using DLQs the consumers need to support process messages in any order without affecting bussiness logic.
 
+## Database Entities
+
+`dead-letter`:
+
+- `topic` (the topic to where the original message was going)
+- `exception-info` (the stack trace when that acused the problem while consuming the message)
+- `payload` (the body of the dead-letter message)
+- `created-at` (when the dead-letter arived)
+- `updated-at` (when the last update was made to the entity)
+- `replay-count` (number of times that the message was replayed)
+- `status` (informs about the status of the dead-letter, if it's ":unprocessed" or  ":processed")
+
+## Kafka Consumers
+
+`"create-dead-letter"` (A global topic that is used to create new dead-letter entity, so we can reproduce the message
+later)
+
 ## License
 
 Copyright © 2022 Bruno do Nascimento Maciel
