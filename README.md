@@ -30,6 +30,13 @@ when using DLQs the consumers need to support process messages in any order with
 `"create-dead-letter"` (A global topic that is used to create new dead-letter entity, so we can reproduce the message
 later)
 
+Endpoints
+
+- **[POST]** "api/dead-letters/:id" (replay dead-letter)
+- **[DELETE]** "api/dead-letters/:id" (drop dead-letter)
+- **[GET]** "api/dead-letters" (get dead-letter list of id's)
+- **[GET]** "api/dead-letters/:id" (get dead-letter info)
+
 ## License
 
 Copyright © 2022 Bruno do Nascimento Maciel
