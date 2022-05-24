@@ -17,10 +17,10 @@ when using DLQs the consumers need to support process messages in any order with
 `dead-letter`:
 
 - `topic` (the topic to where the original message was going)
-- `exception-info` (the stack trace when that acused the problem while consuming the message)
-- `payload` (the body of the dead-letter message)
+- `exception-info` (the stack trace when that accused the problem while consuming the message)
+- `payload` (the body wof the dead-letter message)
 - `service` (name of the service from where the DQL was raised)
-- `created-at` (when the dead-letter arived)
+- `created-at` (when the dead-letter arrived)
 - `updated-at` (when the last update was made to the entity)
 - `replay-count` (number of times that the message was replayed)
 - `status` (informs about the status of the dead-letter, if it's ":unprocessed" or  ":processed")
