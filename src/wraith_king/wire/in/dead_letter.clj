@@ -2,6 +2,7 @@
   (:require [schema.core :as s]))
 
 (s/defschema DeadLetter
-  {:service        s/Str
-   :topic          s/Str
-   :exception-info s/Str})
+  {:service        s/Keyword
+   :topic          s/Keyword
+   :exception-info s/Str
+   :payload        s/Str})

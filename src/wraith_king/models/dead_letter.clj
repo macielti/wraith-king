@@ -2,7 +2,7 @@
   (:require [schema.core :as s])
   (:import (java.util Date)))
 
-(def Status (s/enum :waiting :processed :dropped))
+(def Status (s/enum :unprocessed :processed :dropped))
 
 (s/defschema DeadLetter
   {:dead-letter/id             s/Uuid
