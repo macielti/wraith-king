@@ -5,5 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.stuartsierra/component "1.1.0"]
+                 [com.datomic/datomic-free "0.9.5697"]
+                 [prismatic/schema "1.2.1"]
                  [net.clojars.macielti/common-clj "12.15.12"]]
   :repl-options {:init-ns wraith-king.core})
