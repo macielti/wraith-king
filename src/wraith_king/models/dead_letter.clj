@@ -8,6 +8,7 @@
   {:dead-letter/id             s/Uuid
    :dead-letter/service        s/Keyword
    :dead-letter/topic          s/Keyword
+   :dead-letter/payload        s/Str
    :dead-letter/exception-info s/Str
    :dead-letter/created-at     Date
    :dead-letter/updated-at     Date

@@ -3,7 +3,8 @@
             [wraith-king.models.dead-letter :as models.dead-letter]
             [wraith-king.db.datomic.dead-letter :as datomic.dead-letter]))
 
-(s/defn create!
+(s/defn create! :- models.dead-letter/DeadLetter
   [dead-letter :- models.dead-letter/DeadLetter
    datomic]
-  (datomic.dead-letter/insert! dead-letter datomic))
+  (datomic.dead-letter/insert! dead-letter datomic)
+  dead-letter)

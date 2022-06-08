@@ -6,4 +6,4 @@
   [{dead-letter                       :json-params
     {:keys [datomic producer config]} :components}]
   {:status 200
-   :body   nil})
+   :body   ()})
