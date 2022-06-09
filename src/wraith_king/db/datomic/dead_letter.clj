@@ -8,7 +8,7 @@
    datomic]
   (d/transact datomic [dead-letter]))
 
-(s/defn lookup-by-dead-letter-id! :- (s/maybe models.dead-letter/DeadLetter)
+(s/defn lookup :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
    datomic]
   (some-> (d/q '[:find (pull ?dead-letter [*])
