@@ -8,9 +8,10 @@
                  (apply s/enum)))
 
 (s/defschema DeadLetter
-  {:id             s/Uuid
+  {:id             s/Str
    :service        s/Str
    :topic          s/Str
+   :payload        s/Str
    :exception-info s/Str
    :replay-count   s/Int
    :status         Status

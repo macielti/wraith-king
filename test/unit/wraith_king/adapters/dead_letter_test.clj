@@ -24,7 +24,7 @@
                  :dead-letter/payload        "{\"test\": \"ok\"}"}
                 (adapters.dead-letter/wire->dead-letter wire-dead-letter)))))
 
-(deftest ->wire-test
+(st/deftest ->wire-test
   (testing "that we can externalize a internal dead-letter entity"
     (is (match? {:id             fixtures.dead-letter/wire-dead-letter-id
                  :service        "PORTEIRO"
