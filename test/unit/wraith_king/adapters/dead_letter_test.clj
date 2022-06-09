@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [matcher-combinators.test :refer [match?]]
             [schema.test :as st]
+            [fixtures.dead-letter]
             [wraith-king.adapters.dead-letter :as adapters.dead-letter]))
 
 (def wire-dead-letter
@@ -22,3 +23,16 @@
                  :dead-letter/topic          :send-email
                  :dead-letter/payload        "{\"test\": \"ok\"}"}
                 (adapters.dead-letter/wire->dead-letter wire-dead-letter)))))
+
+(deftest ->wire-test
+  (testing "that we can externalize a internal dead-letter entity"
+    (is (match? {:id             fixtures.dead-letter/wire-dead-letter-id
+                 :service        "PORTEIRO"
+                 :payload        "{\"test\": \"ok\"}"
+                 :exception-info "Critical Exception (StackTrace)"
+                 :topic          "PORTEIRO.CREATE_CONTACT"
+                 :status         "UNPROCESSED"
+                 :replay-count   0
+                 :updated-at     string?
+                 :created-at     string?}
+                (adapters.dead-letter/->wire fixtures.dead-letter/internal-dead-letter)))))

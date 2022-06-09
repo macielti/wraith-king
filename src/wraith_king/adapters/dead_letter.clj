@@ -1,7 +1,6 @@
 (ns wraith-king.adapters.dead-letter
   (:require [schema.core :as s]
             [camel-snake-kebab.core :as camel-snake-kebab]
-            [common-clj.time.parser.core :as time.parser]
             [wraith-king.models.dead-letter :as models.dead-letter]
             [wraith-king.wire.in.dead-letter :as wire.in.dead-letter]
             [wraith-king.wire.out.dead-letter :as wire.out.dead-letter])
@@ -29,5 +28,5 @@
    :payload        payload
    :replay-count   replay-count
    :status         (camel-snake-kebab/->SCREAMING_SNAKE_CASE_STRING status)
-   :created-at     created-at
-   :updated-at     updated-at})
+   :created-at     (str created-at)
+   :updated-at     (str updated-at)})
