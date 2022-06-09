@@ -9,4 +9,5 @@
     {:keys [datomic]} :components}]
   {:status 200
    :body   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-               (controllers.dead-letter/create! datomic))})
+               (controllers.dead-letter/create! datomic)
+               adapters.dead-letter/->wire)})
