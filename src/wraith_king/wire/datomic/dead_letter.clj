@@ -27,10 +27,10 @@
     :db/cardinality :db.cardinality/one
     :db/doc         "Instant when the last update was made to the dead-letter entity"}
    {:db/ident       :dead-letter/replay-count
-    :db/valueType   :db.type/int
+    :db/valueType   :db.type/long
     :db/cardinality :db.cardinality/one
     :db/doc         "Number of times that the dead-letter was replayed"}
    {:db/ident       :dead-letter/status
-    :db/valueType   :db.type/int
+    :db/valueType   :db.type/keyword
     :db/cardinality :db.cardinality/one
     :db/doc         "Status of the dead-letter, if it's ':unprocessed', ':processed' or ':blocked'"}])

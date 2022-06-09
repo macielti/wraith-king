@@ -1,0 +1,13 @@
+(ns wraith-king.db.datomic.dead-letter-test
+  (:require [clojure.test :refer :all]
+            [schema.test :as st]
+            [datomic.api :as d]
+            [fixtures.dead-letter]
+            [wraith-king.db.datomic.dead-letter :as datomic.dead-letter]
+            [common-clj.component.datomic :as component.datomic]
+            [wraith-king.db.datomic.config :as datomic.config]))
+
+(st/deftest lookup-test
+  (let [mocked-datomic (component.datomic/mocked-datomic datomic.config/schemas)]
+    (datomic.dead-letter/insert! fixtures.dead-letter/internal-dead-letter mocked-datomic)
+    (d/release mocked-datomic)))
