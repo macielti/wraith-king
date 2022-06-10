@@ -1,4 +1,5 @@
 (ns wraith-king.diplomat.http-server
   (:require [wraith-king.diplomat.http-server.dead-letter :as diplomat.http-server.dead-letter]))
 
-(def routes [["/api/dead-letters" :post diplomat.http-server.dead-letter/create!]])
+(def routes [["/api/dead-letters" :post diplomat.http-server.dead-letter/create!]
+             ["/api/dead-letters/:id" :get diplomat.http-server.dead-letter/fetch]])

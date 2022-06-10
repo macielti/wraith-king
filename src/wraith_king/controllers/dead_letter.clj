@@ -8,3 +8,8 @@
    datomic]
   (datomic.dead-letter/insert! dead-letter datomic)
   dead-letter)
+
+(s/defn fetch
+  [dead-letter-id :- s/Uuid
+   datomic]
+  (datomic.dead-letter/lookup dead-letter-id datomic))

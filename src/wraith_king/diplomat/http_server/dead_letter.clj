@@ -1,7 +1,8 @@
 (ns wraith-king.diplomat.http-server.dead-letter
   (:require [schema.core :as s]
             [wraith-king.controllers.dead-letter :as controllers.dead-letter]
-            [wraith-king.adapters.dead-letter :as adapters.dead-letter]))
+            [wraith-king.adapters.dead-letter :as adapters.dead-letter])
+  (:import (java.util UUID)))
 
 (s/defn create!
   "Create new dead-letter"
@@ -10,4 +11,12 @@
   {:status 200
    :body   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
                (controllers.dead-letter/create! datomic)
+               adapters.dead-letter/->wire)})
+
+(s/defn fetch
+  [{{:keys [id]}      :path-params
+    {:keys [datomic]} :components}]
+  {:status 200
+   :body   (-> (UUID/fromString id)
+               (controllers.dead-letter/fetch datomic)
                adapters.dead-letter/->wire)})
