@@ -14,4 +14,5 @@
   (some-> (d/q '[:find (pull ?dead-letter [*])
                  :in $ ?dead-letter-id
                  :where [?dead-letter :dead-letter/id ?dead-letter-id]] (d/db datomic) dead-letter-id)
-          ffirst))
+          ffirst
+          (dissoc :db/id)))

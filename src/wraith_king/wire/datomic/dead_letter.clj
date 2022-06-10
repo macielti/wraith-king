@@ -18,6 +18,10 @@
     :db/valueType   :db.type/string
     :db/cardinality :db.cardinality/one
     :db/doc         "Stack trace from the dead-letter exception"}
+   {:db/ident       :dead-letter/payload
+    :db/valueType   :db.type/string
+    :db/cardinality :db.cardinality/one
+    :db/doc         "Original message payload"}
    {:db/ident       :dead-letter/created-at
     :db/valueType   :db.type/instant
     :db/cardinality :db.cardinality/one
