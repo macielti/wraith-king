@@ -20,7 +20,7 @@
                  [prismatic/schema "1.2.1"]
                  [net.clojars.macielti/common-clj "13.16.12"]]
 
-  :resource-paths ["resources"]
+  :resource-paths ["resources" "test/resources/"]
 
   :profiles {:test {:env {:clj-env "test"}}}
 

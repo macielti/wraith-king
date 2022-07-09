@@ -16,7 +16,10 @@
 (s/defn fetch
   [{{:keys [id]}      :path-params
     {:keys [datomic]} :components}]
-  {:status 200
-   :body   (-> (UUID/fromString id)
-               (controllers.dead-letter/fetch (:connection datomic))
-               adapters.dead-letter/->wire)})
+  (let [dead-letter (-> (UUID/fromString id)
+                        (controllers.dead-letter/fetch (:connection datomic)))]
+    (if dead-letter
+      {:status 200
+       :body   (adapters.dead-letter/->wire dead-letter)}
+      {:status 404
+       :body "Not Found"})))

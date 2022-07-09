@@ -9,7 +9,7 @@
   (datomic.dead-letter/insert! dead-letter datomic)
   dead-letter)
 
-(s/defn fetch
+(s/defn fetch :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
    datomic]
   (datomic.dead-letter/lookup dead-letter-id datomic))
