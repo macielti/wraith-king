@@ -5,4 +5,6 @@
 (def routes [["/api/dead-letters" :post [interceptors.user-identity/user-identity-interceptor
                                          (interceptors.user-identity/user-required-roles-interceptor [:admin])
                                          diplomat.http-server.dead-letter/create!] :route-name :create-dead-letter]
-             ["/api/dead-letters/:id" :get [diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]])
+             ["/api/dead-letters/:id" :get [interceptors.user-identity/user-identity-interceptor
+                                            (interceptors.user-identity/user-required-roles-interceptor [:admin])
+                                            diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]])
