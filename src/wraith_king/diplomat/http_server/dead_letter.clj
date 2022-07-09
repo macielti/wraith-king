@@ -8,9 +8,9 @@
   "Create new dead-letter"
   [{dead-letter       :json-params
     {:keys [datomic]} :components}]
-  {:status 200
+  {:status 201
    :body   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-               (controllers.dead-letter/create! datomic)
+               (controllers.dead-letter/create! (:connection datomic))
                adapters.dead-letter/->wire)})
 
 (s/defn fetch
@@ -18,5 +18,5 @@
     {:keys [datomic]} :components}]
   {:status 200
    :body   (-> (UUID/fromString id)
-               (controllers.dead-letter/fetch datomic)
+               (controllers.dead-letter/fetch (:connection datomic))
                adapters.dead-letter/->wire)})

@@ -11,7 +11,7 @@
 (st/deftest lookup-test&insert-test
   (let [mocked-datomic (component.datomic/mocked-datomic datomic.config/schemas)]
     (datomic.dead-letter/insert! fixtures.dead-letter/internal-dead-letter mocked-datomic)
-    (testing "that we can query a dead-letter by id"
+    (testing "that we can query a dead-letter by it's id"
       (is (match? fixtures.dead-letter/internal-dead-letter
                   (datomic.dead-letter/lookup fixtures.dead-letter/dead-letter-id mocked-datomic))))
     (d/release mocked-datomic)))

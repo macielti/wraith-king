@@ -3,5 +3,5 @@
             [wraith-king.interceptors.user-identity :as interceptors.user-identity]))
 
 (def routes [["/api/dead-letters" :post [diplomat.http-server.dead-letter/create!
-                                         (interceptors.user-identity/user-required-roles-interceptor [:admin])]]
-             ["/api/dead-letters/:id" :get diplomat.http-server.dead-letter/fetch]])
+                                         #_(interceptors.user-identity/user-required-roles-interceptor [:admin])] :route-name :create-dead-letter]
+             ["/api/dead-letters/:id" :get [diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]])

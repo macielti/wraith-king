@@ -18,7 +18,6 @@
    :dead-letter/created-at     (Date.)
    :dead-letter/updated-at     (Date.)})
 
-;TODO: Add tests for this
 (s/defn ->wire :- wire.out.dead-letter/DeadLetter
   [{:dead-letter/keys [id service topic exception-info payload replay-count status created-at updated-at]} :- models.dead-letter/DeadLetter]
   {:id             (str id)

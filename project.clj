@@ -11,8 +11,10 @@
   :exclusions [log4j]
 
   :dependencies [[org.clojure/clojure "1.11.1"]
+                 [danlentz/clj-uuid "0.1.9"]
                  [buddy/buddy-sign "3.4.333"]
                  [com.stuartsierra/component "1.1.0"]
+                 [cheshire "5.11.0"]
                  [com.datomic/datomic-free "0.9.5697"]
                  [nubank/matcher-combinators "3.5.0"]
                  [prismatic/schema "1.2.1"]

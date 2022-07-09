@@ -6,7 +6,7 @@
             [wraith-king.adapters.dead-letter :as adapters.dead-letter]))
 
 (def wire-dead-letter
-  {:service       "ednaldo-pereira-service"
+  {:service       "EDNALDO_PEREIRA_SERVICE"
    :topic         "send-email"
    :exceptionInfo "Very Strange Exception"
    :payload       "{\"test\": \"ok\"}"})
