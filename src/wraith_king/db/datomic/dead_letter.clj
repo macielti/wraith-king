@@ -16,3 +16,12 @@
                  :where [?dead-letter :dead-letter/id ?dead-letter-id]] (d/db datomic) dead-letter-id)
           ffirst
           (dissoc :db/id)))
+
+(s/defn active-dead-letters :- [models.dead-letter/DeadLetter]
+  "Fetch dead-letters that are not dropped and were not successfully processed"
+  [datomic]
+  (some-> (d/q '[:find (pull ?dead-letter [*])
+                 :in $
+                 :where [?dead-letter :dead-letter/status :unprocessed]] (d/db datomic))
+          (->> (mapv first))
+          (->> (mapv #(dissoc % :db/id)))))
