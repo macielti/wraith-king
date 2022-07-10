@@ -17,7 +17,7 @@
           ffirst
           (dissoc :db/id)))
 
-(s/defn active-dead-letters :- [models.dead-letter/DeadLetter]
+(s/defn active :- [models.dead-letter/DeadLetter]
   "Fetch dead-letters that are not dropped and were not successfully processed"
   [datomic]
   (some-> (d/q '[:find (pull ?dead-letter [*])
