@@ -22,4 +22,10 @@
       {:status 200
        :body   (adapters.dead-letter/->wire dead-letter)}
       {:status 404
-       :body "Not Found"})))
+       :body   "Not Found"})))
+
+(s/defn fetch-active
+  [{{:keys [datomic]} :components}]
+  {:status 200
+   :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
+               adapters.dead-letter/->wire)})

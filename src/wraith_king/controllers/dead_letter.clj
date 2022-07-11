@@ -13,3 +13,7 @@
   [dead-letter-id :- s/Uuid
    datomic]
   (datomic.dead-letter/lookup dead-letter-id datomic))
+
+(s/defn fetch-active :- [models.dead-letter/DeadLetter]
+  [datomic]
+  (datomic.dead-letter/active datomic))
