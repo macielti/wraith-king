@@ -7,41 +7,33 @@
             [integration.aux.http :as http]
             [common-clj.auth.core :as common-auth]
             [common-clj.test.helper.core :as test.helper]
-            [clj-uuid]))
-
-(def wire-dead-letter
-  {:service       "SOME_SERVICE"
-   :topic         "SOME_TOPIC"
-   :exceptionInfo "Very strange Exception with StackTrace"
-   :payload       "{\"test\": \"ok\"}"})
-
-(def user-info
-  {:user {:id    (test.helper/uuid)
-          :roles [:admin]}})
+            [clj-uuid]
+            [fixtures.dead-letter]
+            [fixtures.user]))
 
 (deftest fetch-non-existent-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)
-        token (common-auth/->token user-info jwt-secret)]
+        token (common-auth/->token fixtures.user/user-info jwt-secret)]
     (testing "that we can fetch dead-letters [not fund case]"
       (is (match? {:status 404
                    :body   "Not Found"}
                   (http/fetch-dead-letter-by-its-id (test.helper/uuid)
-                                                    (common-auth/->token user-info jwt-secret)
+                                                    token
                                                     service-fn))))
     (testing "that we can fetch dead-letters by it's id"
       (is (match? {:status 200
-                   :body   {:service        "SOME_SERVICE"
+                   :body   {:service        "PORTEIRO"
                             :payload        "{\"test\": \"ok\"}"
                             :topic          "SOME_TOPIC"
                             :status         "UNPROCESSED"
                             :id             clj-uuid/uuid-string?
                             :replay-count   0
-                            :exception-info "Very strange Exception with StackTrace"
+                            :exception-info "Critical Exception (StackTrace)"
                             :updated-at     string?
                             :created-at     string?}}
-                  (http/fetch-dead-letter-by-its-id (-> (http/create-dead-letter! wire-dead-letter token service-fn) :body :id)
+                  (http/fetch-dead-letter-by-its-id (-> (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter token service-fn) :body :id)
                                                     token
                                                     service-fn))))
     (component/stop system)))

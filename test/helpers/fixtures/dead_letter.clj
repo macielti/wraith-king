@@ -14,3 +14,9 @@
    :dead-letter/updated-at     (Date.)
    :dead-letter/replay-count   0
    :dead-letter/status         :unprocessed})
+
+(def wire-dead-letter
+  {:service       "PORTEIRO"
+   :topic         "SOME_TOPIC"
+   :exceptionInfo "Critical Exception (StackTrace)"
+   :payload       "{\"test\": \"ok\"}"})
