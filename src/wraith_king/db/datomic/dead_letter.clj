@@ -33,3 +33,10 @@
   (d/transact datomic [{:dead-letter/id         dead-letter-id
                         :dead-letter/updated-at (Date.)}
                        [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :unprocessed :processed]]))
+
+(s/defn mask-as-dropped!
+  [dead-letter-id :- s/Uuid
+   datomic]
+  (d/transact datomic [{:dead-letter/id         dead-letter-id
+                        :dead-letter/updated-at (Date.)}
+                       [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :unprocessed :dropped]]))
