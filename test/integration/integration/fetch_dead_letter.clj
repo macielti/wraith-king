@@ -11,7 +11,7 @@
             [fixtures.dead-letter]
             [fixtures.user]))
 
-(deftest fetch-non-existent-dead-letter
+(deftest fetch-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)

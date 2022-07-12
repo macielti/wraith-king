@@ -24,3 +24,13 @@
       (is (match? [fixtures.dead-letter/internal-dead-letter]
                   (datomic.dead-letter/active mocked-datomic))))
     (d/release mocked-datomic)))
+
+(deftest mask-as-processed!-test
+  (let [mocked-datomic (component.datomic/mocked-datomic datomic.config/schemas)]
+    (datomic.dead-letter/insert! fixtures.dead-letter/internal-dead-letter mocked-datomic)
+    (datomic.dead-letter/mask-as-processed! fixtures.dead-letter/dead-letter-id mocked-datomic)
+    (testing "that we can query all active dead-letters"
+      (is (match? {:dead-letter/id     fixtures.dead-letter/dead-letter-id
+                   :dead-letter/status :processed}
+                  (datomic.dead-letter/lookup fixtures.dead-letter/dead-letter-id mocked-datomic))))
+    (d/release mocked-datomic)))
