@@ -27,3 +27,16 @@
      :body   (if (= status 200)
                (json/decode body true)
                body)}))
+
+(defn drop-dead-letter!
+  [dead-letter-id
+   token
+   service-fn]
+  (let [{:keys [body status]} (test/response-for service-fn
+                                                 :delete (str "/api/dead-letters/" dead-letter-id)
+                                                 :headers {"Content-Type"  "application/json"
+                                                           "Authorization" (str "Bearer " token)})]
+    {:status status
+     :body   (if (= status 200)
+               (json/decode body true)
+               body)}))
