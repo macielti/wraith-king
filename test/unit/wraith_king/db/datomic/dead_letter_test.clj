@@ -34,3 +34,13 @@
                    :dead-letter/status :processed}
                   (datomic.dead-letter/lookup fixtures.dead-letter/dead-letter-id mocked-datomic))))
     (d/release mocked-datomic)))
+
+(deftest mark-as-dropped!-test
+  (let [mocked-datomic (component.datomic/mocked-datomic datomic.config/schemas)]
+    (datomic.dead-letter/insert! fixtures.dead-letter/internal-dead-letter mocked-datomic)
+    (datomic.dead-letter/mark-as-dropped! fixtures.dead-letter/dead-letter-id mocked-datomic)
+    (testing "that we can query all active dead-letters"
+      (is (match? {:dead-letter/id     fixtures.dead-letter/dead-letter-id
+                   :dead-letter/status :dropped}
+                  (datomic.dead-letter/lookup fixtures.dead-letter/dead-letter-id mocked-datomic))))
+    (d/release mocked-datomic)))
