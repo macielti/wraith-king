@@ -28,7 +28,7 @@
   [{{:keys [datomic]} :components}]
   {:status 200
    :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
-               adapters.dead-letter/->wire)})
+               (->> (map adapters.dead-letter/->wire)))})
 
 (s/defn drop!
   [{{:keys [id]}      :path-params

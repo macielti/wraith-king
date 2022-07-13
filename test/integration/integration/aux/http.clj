@@ -40,3 +40,15 @@
      :body   (if (= status 200)
                (json/decode body true)
                body)}))
+
+(defn fetch-active-dead-letters
+  [token
+   service-fn]
+  (let [{:keys [body status]} (test/response-for service-fn
+                                                 :get "/api/dead-letters"
+                                                 :headers {"Content-Type"  "application/json"
+                                                           "Authorization" (str "Bearer " token)})]
+    {:status status
+     :body   (if (= status 200)
+               (json/decode body true)
+               body)}))
