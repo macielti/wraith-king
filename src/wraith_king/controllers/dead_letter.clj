@@ -17,3 +17,9 @@
 (s/defn fetch-active :- [models.dead-letter/DeadLetter]
   [datomic]
   (datomic.dead-letter/active datomic))
+
+(s/defn drop! :- models.dead-letter/DeadLetter
+  [dead-letter-id :- s/Uuid
+   datomic]
+  (datomic.dead-letter/mark-as-dropped! dead-letter-id datomic)
+  (datomic.dead-letter/lookup dead-letter-id datomic))

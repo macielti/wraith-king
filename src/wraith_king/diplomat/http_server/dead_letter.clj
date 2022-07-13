@@ -29,3 +29,11 @@
   {:status 200
    :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
                adapters.dead-letter/->wire)})
+
+(s/defn drop!
+  [{{:keys [id]}      :path-params
+    {:keys [datomic]} :components}]
+  {:status 200
+   :body   (-> (UUID/fromString id)
+               (controllers.dead-letter/drop! (:connection datomic))
+               adapters.dead-letter/->wire)})

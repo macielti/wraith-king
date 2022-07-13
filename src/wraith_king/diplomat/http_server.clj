@@ -6,8 +6,11 @@
                                          (interceptors.user-identity/user-required-roles-interceptor [:admin])
                                          diplomat.http-server.dead-letter/create!] :route-name :create-dead-letter]
              ["/api/dead-letters" :get [interceptors.user-identity/user-identity-interceptor
-                                            (interceptors.user-identity/user-required-roles-interceptor [:admin])
-                                            diplomat.http-server.dead-letter/fetch-active] :route-name :fetch-active-dead-letters]
+                                        (interceptors.user-identity/user-required-roles-interceptor [:admin])
+                                        diplomat.http-server.dead-letter/fetch-active] :route-name :fetch-active-dead-letters]
              ["/api/dead-letters/:id" :get [interceptors.user-identity/user-identity-interceptor
                                             (interceptors.user-identity/user-required-roles-interceptor [:admin])
-                                            diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]])
+                                            diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]
+             ["/api/dead-letters/:id" :delete [interceptors.user-identity/user-identity-interceptor
+                                               (interceptors.user-identity/user-required-roles-interceptor [:admin])
+                                               diplomat.http-server.dead-letter/drop!] :route-name :drop-dead-letter]])
