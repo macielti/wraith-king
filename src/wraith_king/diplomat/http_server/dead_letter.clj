@@ -37,3 +37,9 @@
    :body   (-> (UUID/fromString id)
                (controllers.dead-letter/drop! (:connection datomic))
                adapters.dead-letter/->wire)})
+
+(s/defn replay!
+  [{{:keys [id]}               :path-params
+    {:keys [datomic producer]} :components}]
+  (controllers.dead-letter/replay! (UUID/fromString id) (:connection datomic) producer)
+  {:status 202})

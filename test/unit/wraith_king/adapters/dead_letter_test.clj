@@ -17,6 +17,10 @@
                  :dead-letter/status         :unprocessed
                  :dead-letter/topic          :some-topic
                  :dead-letter/payload        "{\"test\": \"ok\"}"}
+                (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter))))
+
+  (testing "the same wire dead-letter input always produce dead-letters with the same id"
+    (is (match? {:dead-letter/id #uuid "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"}
                 (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter)))))
 
 (st/deftest ->wire-test

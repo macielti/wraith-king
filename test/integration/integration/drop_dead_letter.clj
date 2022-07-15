@@ -8,8 +8,7 @@
             [matcher-combinators.test :refer [match?]]
             [clj-uuid]
             [fixtures.user]
-            [fixtures.dead-letter]
-            [taoensso.timbre :as log]))
+            [fixtures.dead-letter]))
 
 
 (deftest create-dead-letter

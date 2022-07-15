@@ -8,7 +8,7 @@
 
 (s/defn wire->dead-letter :- models.dead-letter/DeadLetter
   [{:keys [service topic exceptionInfo payload]} :- wire.in.dead-letter/DeadLetter]
-  {:dead-letter/id             (UUID/randomUUID)
+  {:dead-letter/id             (UUID/nameUUIDFromBytes (.getBytes (str service topic exceptionInfo payload)))
    :dead-letter/service        (camel-snake-kebab/->kebab-case-keyword service)
    :dead-letter/topic          (camel-snake-kebab/->kebab-case-keyword topic)
    :dead-letter/exception-info exceptionInfo

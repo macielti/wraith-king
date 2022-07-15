@@ -11,6 +11,9 @@
              ["/api/dead-letters/:id" :get [interceptors.user-identity/user-identity-interceptor
                                             (interceptors.user-identity/user-required-roles-interceptor [:admin])
                                             diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]
+             ["/api/dead-letters/:id" :post [interceptors.user-identity/user-identity-interceptor
+                                             (interceptors.user-identity/user-required-roles-interceptor [:admin])
+                                             diplomat.http-server.dead-letter/replay!] :route-name :replay-dead-letter-by-id]
              ["/api/dead-letters/:id" :delete [interceptors.user-identity/user-identity-interceptor
                                                (interceptors.user-identity/user-required-roles-interceptor [:admin])
                                                diplomat.http-server.dead-letter/drop!] :route-name :drop-dead-letter]])
