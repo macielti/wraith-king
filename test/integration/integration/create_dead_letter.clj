@@ -13,7 +13,8 @@
 (deftest create-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
-        {:keys [jwt-secret]} (component.helper/get-component-content :config system)]
+        {:keys [jwt-secret]} (component.helper/get-component-content :config system)
+        token (common-auth/->token fixtures.user/user-info jwt-secret)]
 
     (testing "that we can create a endpoint using a dead-letter"
       (is (match? {:status 201
@@ -27,10 +28,14 @@
                             :updated-at     string?
                             :created-at     string?}}
                   (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
-                                            (common-auth/->token fixtures.user/user-info jwt-secret)
+                                            token
                                             service-fn)))
 
-      (testing "that creating the same dead-letter two times, only increase the replay count of the first one"
+      (testing "that creating the same dead-letter two times, only increase the replay count of the first one if it was in a processed status"
+        (http/replay-dead-letter! (-> (http/fetch-active-dead-letters token service-fn) :body first :id)
+                                  token
+                                  service-fn)
+
         (is (match? {:status 201
                      :body   {:service        "PORTEIRO"
                               :payload        "{\"test\": \"ok\"}"
@@ -42,6 +47,6 @@
                               :updated-at     string?
                               :created-at     string?}}
                     (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
-                                              (common-auth/->token fixtures.user/user-info jwt-secret)
+                                              token
                                               service-fn)))))
     (component/stop system)))

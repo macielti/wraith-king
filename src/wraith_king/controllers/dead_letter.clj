@@ -7,10 +7,11 @@
 (s/defn create! :- models.dead-letter/DeadLetter
   [{:dead-letter/keys [id] :as dead-letter} :- models.dead-letter/DeadLetter
    datomic]
-  (if (datomic.dead-letter/lookup id datomic)
-    (datomic.dead-letter/mark-as-unprocessed! id datomic)
-    (datomic.dead-letter/insert! dead-letter datomic))
-  dead-letter)
+  (if (= :processed (-> (datomic.dead-letter/lookup id datomic) :dead-letter/status))
+    (do (datomic.dead-letter/mark-as-unprocessed! id datomic)
+        (datomic.dead-letter/lookup id datomic))
+    (do (datomic.dead-letter/insert! dead-letter datomic)
+        dead-letter)))
 
 (s/defn fetch :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
