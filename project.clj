@@ -18,7 +18,7 @@
                  [com.datomic/datomic-free "0.9.5697"]
                  [nubank/matcher-combinators "3.5.0"]
                  [prismatic/schema "1.2.1"]
-                 [net.clojars.macielti/common-clj "13.16.12"]]
+                 [net.clojars.macielti/common-clj "14.16.13"]]
 
   :resource-paths ["resources" "test/resources/"]
 
