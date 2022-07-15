@@ -14,6 +14,7 @@
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)]
+
     (testing "that we can create a endpoint using a dead-letter"
       (is (match? {:status 201
                    :body   {:service        "PORTEIRO"
@@ -27,5 +28,20 @@
                             :created-at     string?}}
                   (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
                                             (common-auth/->token fixtures.user/user-info jwt-secret)
-                                            service-fn))))
+                                            service-fn)))
+
+      (testing "that creating the same dead-letter two times, only increase the replay count of the first one"
+        (is (match? {:status 201
+                     :body   {:service        "PORTEIRO"
+                              :payload        "{\"test\": \"ok\"}"
+                              :topic          "SOME_TOPIC"
+                              :status         "UNPROCESSED"
+                              :id             clj-uuid/uuid-string?
+                              :replay-count   1
+                              :exception-info "Critical Exception (StackTrace)"
+                              :updated-at     string?
+                              :created-at     string?}}
+                    (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
+                                              (common-auth/->token fixtures.user/user-info jwt-secret)
+                                              service-fn)))))
     (component/stop system)))

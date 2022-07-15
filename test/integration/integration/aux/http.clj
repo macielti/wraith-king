@@ -52,3 +52,14 @@
      :body   (if (= status 200)
                (json/decode body true)
                body)}))
+
+(defn replay-dead-letter!
+  [dead-letter-id
+   token
+   service-fn]
+  (let [{:keys [body status]} (test/response-for service-fn
+                                                 :post (str "/api/dead-letters/" dead-letter-id)
+                                                 :headers {"Content-Type"  "application/json"
+                                                           "Authorization" (str "Bearer " token)})]
+    {:status status
+     :body   (json/decode body true)}))

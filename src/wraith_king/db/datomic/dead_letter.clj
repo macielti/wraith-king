@@ -28,11 +28,12 @@
           (->> (mapv #(dissoc % :db/id)))))
 
 (s/defn mask-as-processed!
-  [dead-letter-id :- s/Uuid
+  [{:dead-letter/keys [id replay-count]} :- models.dead-letter/DeadLetter
    datomic]
-  (d/transact datomic [{:dead-letter/id         dead-letter-id
+  (d/transact datomic [{:dead-letter/id         id
                         :dead-letter/updated-at (Date.)}
-                       [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :unprocessed :processed]]))
+                       [:db/cas [:dead-letter/id id] :dead-letter/status :unprocessed :processed]
+                       [:db/cas [:dead-letter/id id] :dead-letter/replay-count replay-count (inc replay-count)]]))
 
 (s/defn mark-as-dropped!
   [dead-letter-id :- s/Uuid
@@ -40,3 +41,10 @@
   (d/transact datomic [{:dead-letter/id         dead-letter-id
                         :dead-letter/updated-at (Date.)}
                        [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :unprocessed :dropped]]))
+
+(s/defn mark-as-unprocessed!
+  [dead-letter-id :- s/Uuid
+   datomic]
+  (d/transact datomic [{:dead-letter/id         dead-letter-id
+                        :dead-letter/updated-at (Date.)}
+                       [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :processed :unprocessed]]))
