@@ -6,7 +6,8 @@
             [common-clj.component.service :as component.service]
             [common-clj.component.kafka.consumer :as component.consumer]
             [wraith-king.db.datomic.config :as datomic.config]
-            [wraith-king.diplomat.http-server :as diplomat.http-server]))
+            [wraith-king.diplomat.http-server :as diplomat.http-server]
+            [wraith-king.diplomat.consumer :as diplomat.consumer]))
 
 
 (def system
