@@ -9,7 +9,8 @@
             [clj-uuid]
             [fixtures.dead-letter]
             [fixtures.user]
-            [schema.test :as schema-test]))
+            [schema.test :as schema-test]
+            [common-clj.component.kafka.producer :as component.producer]))
 
 (schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
@@ -50,4 +51,30 @@
                     (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
                                               token
                                               service-fn)))))
+    (component/stop system)))
+
+(schema-test/deftest create-dead-letter-via-kafka-message
+  (let [system (component/start components/system-test)
+        producer (component.helper/get-component-content :producer system)
+        service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
+        {:keys [jwt-secret]} (component.helper/get-component-content :config system)
+        token (common-auth/->token fixtures.user/user-info jwt-secret)]
+
+    (testing "that we can create a dead-letter via kafka message"
+      (component.producer/produce! {:topic :create-dead-letter
+                                    :data  {:payload fixtures.dead-letter/wire-dead-letter}}
+                                   producer)
+
+      (Thread/sleep 5000)
+
+      (is (match? {:status 200
+                   :body   [{:exception-info "Critical Exception (StackTrace)"
+                             :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
+                             :payload        "{\"test\": \"ok\"}"
+                             :replay-count   0
+                             :service        "PORTEIRO"
+                             :status         "UNPROCESSED"
+                             :topic          "SOME_TOPIC"}]}
+                  (http/fetch-active-dead-letters token service-fn))))
+
     (component/stop system)))
