@@ -20,7 +20,7 @@
 
     (testing "that we can replay a dead-letter by it's id"
       (is (match? {:status 202}
-                  (http/replay-dead-letter! (-> (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter token service-fn) :body :id)
+                  (http/replay-dead-letter! (-> (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter token service-fn) :body :dead-letter :id)
                                             token
                                             service-fn)))
 

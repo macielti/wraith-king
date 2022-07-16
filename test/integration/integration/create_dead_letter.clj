@@ -20,34 +20,34 @@
 
     (testing "that we can create a endpoint using a dead-letter"
       (is (match? {:status 201
-                   :body   {:service        "PORTEIRO"
-                            :payload        "{\"test\": \"ok\"}"
-                            :topic          "SOME_TOPIC"
-                            :status         "UNPROCESSED"
-                            :id             clj-uuid/uuid-string?
-                            :replay-count   0
-                            :exception-info "Critical Exception (StackTrace)"
-                            :updated-at     string?
-                            :created-at     string?}}
+                   :body   {:dead-letter {:service        "PORTEIRO"
+                                          :payload        "{\"test\": \"ok\"}"
+                                          :topic          "SOME_TOPIC"
+                                          :status         "UNPROCESSED"
+                                          :id             clj-uuid/uuid-string?
+                                          :replay-count   0
+                                          :exception-info "Critical Exception (StackTrace)"
+                                          :updated-at     string?
+                                          :created-at     string?}}}
                   (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
                                             token
                                             service-fn)))
 
       (testing "that creating the same dead-letter two times, only increase the replay count of the first one if it was in a processed status"
-        (http/replay-dead-letter! (-> (http/fetch-active-dead-letters token service-fn) :body first :id)
+        (http/replay-dead-letter! (-> (http/fetch-active-dead-letters token service-fn) :body first :dead-letter :id)
                                   token
                                   service-fn)
 
         (is (match? {:status 201
-                     :body   {:service        "PORTEIRO"
-                              :payload        "{\"test\": \"ok\"}"
-                              :topic          "SOME_TOPIC"
-                              :status         "UNPROCESSED"
-                              :id             clj-uuid/uuid-string?
-                              :replay-count   1
-                              :exception-info "Critical Exception (StackTrace)"
-                              :updated-at     string?
-                              :created-at     string?}}
+                     :body   {:dead-letter {:service        "PORTEIRO"
+                                            :payload        "{\"test\": \"ok\"}"
+                                            :topic          "SOME_TOPIC"
+                                            :status         "UNPROCESSED"
+                                            :id             clj-uuid/uuid-string?
+                                            :replay-count   1
+                                            :exception-info "Critical Exception (StackTrace)"
+                                            :updated-at     string?
+                                            :created-at     string?}}}
                     (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter
                                               token
                                               service-fn)))))
@@ -68,13 +68,13 @@
       (Thread/sleep 5000)
 
       (is (match? {:status 200
-                   :body   [{:exception-info "Critical Exception (StackTrace)"
-                             :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
-                             :payload        "{\"test\": \"ok\"}"
-                             :replay-count   0
-                             :service        "PORTEIRO"
-                             :status         "UNPROCESSED"
-                             :topic          "SOME_TOPIC"}]}
+                   :body   [{:dead-letter {:exception-info "Critical Exception (StackTrace)"
+                                           :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
+                                           :payload        "{\"test\": \"ok\"}"
+                                           :replay-count   0
+                                           :service        "PORTEIRO"
+                                           :status         "UNPROCESSED"
+                                           :topic          "SOME_TOPIC"}}]}
                   (http/fetch-active-dead-letters token service-fn))))
 
     (component/stop system)))

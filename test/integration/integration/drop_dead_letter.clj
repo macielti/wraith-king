@@ -22,24 +22,24 @@
                                                       service-fn)]
     (testing "that we can create a endpoint using a dead-letter"
       (is (match? {:status 201
-                   :body   {:service        "PORTEIRO"
-                            :payload        "{\"test\": \"ok\"}"
-                            :topic          "SOME_TOPIC"
-                            :status         "UNPROCESSED"
-                            :id             clj-uuid/uuid-string?
-                            :replay-count   0
-                            :exception-info "Critical Exception (StackTrace)"
-                            :updated-at     string?
-                            :created-at     string?}}
+                   :body   {:dead-letter {:service        "PORTEIRO"
+                                          :payload        "{\"test\": \"ok\"}"
+                                          :topic          "SOME_TOPIC"
+                                          :status         "UNPROCESSED"
+                                          :id             clj-uuid/uuid-string?
+                                          :replay-count   0
+                                          :exception-info "Critical Exception (StackTrace)"
+                                          :updated-at     string?
+                                          :created-at     string?}}}
                   created-dead-letter)))
 
     (testing "that we can drop a unprocessed dead-letter"
       (is (match? {:status 200
-                   :body   {:status         "DROPPED"
-                            :id             clj-uuid/uuid-string?
-                            :replay-count   0
-                            :exception-info "Critical Exception (StackTrace)"}}
-                  (http/drop-dead-letter! (-> created-dead-letter :body :id)
+                   :body   {:dead-letter {:status         "DROPPED"
+                                          :id             clj-uuid/uuid-string?
+                                          :replay-count   0
+                                          :exception-info "Critical Exception (StackTrace)"}}}
+                  (http/drop-dead-letter! (-> created-dead-letter :body :dead-letter :id)
                                           token
                                           service-fn))))
     (component/stop system)))

@@ -25,30 +25,30 @@
                                                     service-fn))))
     (testing "that we can fetch dead-letters by it's id"
       (is (match? {:status 200
-                   :body   {:service        "PORTEIRO"
-                            :payload        "{\"test\": \"ok\"}"
-                            :topic          "SOME_TOPIC"
-                            :status         "UNPROCESSED"
-                            :id             clj-uuid/uuid-string?
-                            :replay-count   0
-                            :exception-info "Critical Exception (StackTrace)"
-                            :updated-at     string?
-                            :created-at     string?}}
-                  (http/fetch-dead-letter-by-its-id (-> (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter token service-fn) :body :id)
+                   :body   {:dead-letter {:service        "PORTEIRO"
+                                          :payload        "{\"test\": \"ok\"}"
+                                          :topic          "SOME_TOPIC"
+                                          :status         "UNPROCESSED"
+                                          :id             clj-uuid/uuid-string?
+                                          :replay-count   0
+                                          :exception-info "Critical Exception (StackTrace)"
+                                          :updated-at     string?
+                                          :created-at     string?}}}
+                  (http/fetch-dead-letter-by-its-id (-> (http/create-dead-letter! fixtures.dead-letter/wire-dead-letter token service-fn) :body :dead-letter :id)
                                                     token
                                                     service-fn))))
 
     (testing "that we can fetch active dead-letters"
       (is (match? {:status 200
-                   :body   [{:service        "PORTEIRO"
-                             :payload        "{\"test\": \"ok\"}"
-                             :topic          "SOME_TOPIC"
-                             :status         "UNPROCESSED"
-                             :id             clj-uuid/uuid-string?
-                             :replay-count   0
-                             :exception-info "Critical Exception (StackTrace)"
-                             :updated-at     string?
-                             :created-at     string?}]}
+                   :body   [{:dead-letter {:service        "PORTEIRO"
+                                           :payload        "{\"test\": \"ok\"}"
+                                           :topic          "SOME_TOPIC"
+                                           :status         "UNPROCESSED"
+                                           :id             clj-uuid/uuid-string?
+                                           :replay-count   0
+                                           :exception-info "Critical Exception (StackTrace)"
+                                           :updated-at     string?
+                                           :created-at     string?}}]}
                   (http/fetch-active-dead-letters token
                                                   service-fn))))
     (component/stop system)))

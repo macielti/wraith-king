@@ -9,9 +9,9 @@
   [{dead-letter       :json-params
     {:keys [datomic]} :components}]
   {:status 201
-   :body   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-               (controllers.dead-letter/create! (:connection datomic))
-               adapters.dead-letter/->wire)})
+   :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
+                             (controllers.dead-letter/create! (:connection datomic))
+                             adapters.dead-letter/->wire)}})
 
 (s/defn fetch
   [{{:keys [id]}      :path-params
@@ -20,7 +20,7 @@
                         (controllers.dead-letter/fetch (:connection datomic)))]
     (if dead-letter
       {:status 200
-       :body   (adapters.dead-letter/->wire dead-letter)}
+       :body   {:dead-letter (adapters.dead-letter/->wire dead-letter)}}
       {:status 404
        :body   "Not Found"})))
 
@@ -28,15 +28,15 @@
   [{{:keys [datomic]} :components}]
   {:status 200
    :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
-               (->> (map adapters.dead-letter/->wire)))})
+               (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
   [{{:keys [id]}      :path-params
     {:keys [datomic]} :components}]
   {:status 200
-   :body   (-> (UUID/fromString id)
-               (controllers.dead-letter/drop! (:connection datomic))
-               adapters.dead-letter/->wire)})
+   :body   {:dead-letter (-> (UUID/fromString id)
+                             (controllers.dead-letter/drop! (:connection datomic))
+                             adapters.dead-letter/->wire)}})
 
 (s/defn replay!
   [{{:keys [id]}               :path-params

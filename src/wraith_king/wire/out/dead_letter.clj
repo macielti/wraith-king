@@ -17,3 +17,6 @@
    :status         Status
    :created-at     s/Str
    :updated-at     s/Str})
+
+(s/defschema DeadLetterDocument
+  {:dead-letter DeadLetter})
