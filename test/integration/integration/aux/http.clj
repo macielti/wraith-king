@@ -24,9 +24,7 @@
                                                  :headers {"Content-Type"  "application/json"
                                                            "Authorization" (str "Bearer " token)})]
     {:status status
-     :body   (if (= status 200)
-               (json/decode body true)
-               body)}))
+     :body   (json/decode body true)}))
 
 (defn drop-dead-letter!
   [dead-letter-id
@@ -37,9 +35,7 @@
                                                  :headers {"Content-Type"  "application/json"
                                                            "Authorization" (str "Bearer " token)})]
     {:status status
-     :body   (if (= status 200)
-               (json/decode body true)
-               body)}))
+     :body   (json/decode body true)}))
 
 (defn fetch-active-dead-letters
   [token

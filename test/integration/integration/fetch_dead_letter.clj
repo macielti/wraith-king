@@ -19,7 +19,9 @@
         token (common-auth/->token fixtures.user/user-info jwt-secret)]
     (testing "that we can fetch dead-letters [not fund case]"
       (is (match? {:status 404
-                   :body   "Not Found"}
+                   :body   {:error   "resource-not-found"
+                            :message "Resource could not be found"
+                            :detail  "Not Found"}}
                   (http/fetch-dead-letter-by-its-id (test.helper/uuid)
                                                     token
                                                     service-fn))))

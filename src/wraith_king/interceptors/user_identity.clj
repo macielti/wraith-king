@@ -3,7 +3,8 @@
             [camel-snake-kebab.core :as camel-snake-kebab]
             [clojure.string :as str]
             [common-clj.error.core :as common-error]
-            [buddy.sign.jwt :as jwt])
+            [buddy.sign.jwt :as jwt]
+            [common-clj.io.interceptors.datomic :as io.interceptors.datomic])
   (:import (java.util UUID)
            (clojure.lang ExceptionInfo)))
 
@@ -33,7 +34,6 @@
                                                                                     "Invalid JWT"
                                                                                     "Invalid JWT")))))})
 
-;#TODO: Should this interceptor only be used with the user-identity-interceptor? It can work without it?
 (s/defn user-required-roles-interceptor
   [required-roles :- [s/Keyword]]
   {:name  ::user-required-roles-interceptor
@@ -44,3 +44,13 @@
                                                     "insufficient-roles"
                                                     "Insufficient privileges/roles/permission"
                                                     "Insufficient privileges/roles/permission")))})
+
+(defn dead-letter-resource-identifier-fn
+  [{{:keys [path-params]} :request}]
+  (-> path-params :id UUID/fromString))
+
+(def resource-existence-interceptor-check
+  (io.interceptors.datomic/resource-existence-check-interceptor dead-letter-resource-identifier-fn
+                                                                '[:find (pull ?resource [*])
+                                                                  :in $ ?resource-identifier
+                                                                  :where [?resource :dead-letter/id ?resource-identifier]]))

@@ -11,7 +11,6 @@
             [fixtures.dead-letter]
             [schema.test :as schema-test]))
 
-
 (schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
@@ -42,4 +41,14 @@
                   (http/drop-dead-letter! (-> created-dead-letter :body :dead-letter :id)
                                           token
                                           service-fn))))
+
+    (testing "that we can't drop a dead-letter that does not exists"
+      (is (= {:status 404
+              :body   {:error   "resource-not-found",
+                       :message "Resource could not be found",
+                       :detail  "Not Found"}}
+             (http/drop-dead-letter! (random-uuid)
+                                     token
+                                     service-fn))))
+
     (component/stop system)))

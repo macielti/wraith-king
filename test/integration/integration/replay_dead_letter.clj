@@ -28,4 +28,13 @@
         (is (match? [{:topic :some-topic
                       :data  {:payload {:test "ok"}}}]
                     (component.consumer/produced-messages consumer)))))
+
+    (testing "that we can't replay a dead-letter that does not exists"
+      (is (match? {:status 404
+                   :body   {:error   "resource-not-found"
+                            :message "Resource could not be found"
+                            :detail  "Not Found"}}
+                  (http/replay-dead-letter! (random-uuid)
+                                            token
+                                            service-fn))))
     (component/stop system)))
