@@ -8,10 +8,11 @@
             [matcher-combinators.test :refer [match?]]
             [clj-uuid]
             [fixtures.user]
-            [fixtures.dead-letter]))
+            [fixtures.dead-letter]
+            [schema.test :as schema-test]))
 
 
-(deftest create-dead-letter
+(schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)

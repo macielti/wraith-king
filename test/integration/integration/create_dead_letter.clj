@@ -8,9 +8,10 @@
             [wraith-king.components :as components]
             [clj-uuid]
             [fixtures.dead-letter]
-            [fixtures.user]))
+            [fixtures.user]
+            [schema.test :as schema-test]))
 
-(deftest create-dead-letter
+(schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)

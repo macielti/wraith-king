@@ -8,9 +8,10 @@
             [matcher-combinators.test :refer [match?]]
             [fixtures.dead-letter]
             [fixtures.user]
-            [common-clj.component.kafka.consumer :as component.consumer]))
+            [common-clj.component.kafka.consumer :as component.consumer]
+            [schema.test :as schema-test]))
 
-(deftest create-dead-letter
+(schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
         consumer (component.helper/get-component-content :consumer system)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))

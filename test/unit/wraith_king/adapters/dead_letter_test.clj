@@ -1,12 +1,12 @@
 (ns wraith-king.adapters.dead-letter-test
   (:require [clojure.test :refer :all]
             [matcher-combinators.test :refer [match?]]
-            [schema.test :as st]
             [fixtures.dead-letter]
             [wraith-king.adapters.dead-letter :as adapters.dead-letter]
-            [fixtures.dead-letter]))
+            [fixtures.dead-letter]
+            [schema.test :as schema-test]))
 
-(st/deftest wire->dead-letter-test
+(schema-test/deftest wire->dead-letter-test
   (testing "that we can adapt wire to a internal dead-letter entity"
     (is (match? {:dead-letter/id             uuid?
                  :dead-letter/service        :porteiro
@@ -23,7 +23,7 @@
     (is (match? {:dead-letter/id #uuid "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"}
                 (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter)))))
 
-(st/deftest ->wire-test
+(schema-test/deftest ->wire-test
   (testing "that we can externalize a internal dead-letter entity"
     (is (match? {:id             fixtures.dead-letter/wire-dead-letter-id
                  :service        "PORTEIRO"
