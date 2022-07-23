@@ -8,12 +8,12 @@
             [matcher-combinators.test :refer [match?]]
             [fixtures.dead-letter]
             [fixtures.user]
-            [common-clj.component.kafka.consumer :as component.consumer]
+            [common-clj.component.kafka.producer :as component.producer]
             [schema.test :as schema-test]))
 
 (schema-test/deftest create-dead-letter
   (let [system (component/start components/system-test)
-        consumer (component.helper/get-component-content :consumer system)
+        producer (component.helper/get-component-content :producer system)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)
         token (common-auth/->token fixtures.user/user-info jwt-secret)]
@@ -27,7 +27,7 @@
       (testing "that when we replay a dead-letter, the message is reproduced"
         (is (match? [{:topic :some-topic
                       :data  {:payload {:test "ok"}}}]
-                    (component.consumer/produced-messages consumer)))))
+                    (component.producer/produced-messages producer)))))
 
     (testing "that we can't replay a dead-letter that does not exists"
       (is (match? {:status 404
