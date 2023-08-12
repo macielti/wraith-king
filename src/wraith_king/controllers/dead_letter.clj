@@ -21,8 +21,8 @@
   (database.dead-letter/lookup dead-letter-id (d/db database-connection)))
 
 (s/defn fetch-active :- [models.dead-letter/DeadLetter]
-  [datomic]
-  (datomic.dead-letter/active datomic))
+  [database-connection]
+  (database.dead-letter/active (d/db database-connection)))
 
 (s/defn drop! :- models.dead-letter/DeadLetter
   [dead-letter-id :- s/Uuid

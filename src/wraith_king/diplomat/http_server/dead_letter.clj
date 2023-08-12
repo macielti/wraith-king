@@ -22,9 +22,9 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
-  [{{:keys [datomic]} :components}]
+  [{{:keys [datalevin]} :components}]
   {:status 200
-   :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
+   :body   (-> (controllers.dead-letter/fetch-active datalevin)
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
