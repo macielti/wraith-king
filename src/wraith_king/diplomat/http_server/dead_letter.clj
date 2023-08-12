@@ -36,7 +36,7 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
-  [{{:keys [id]}               :path-params
-    {:keys [datomic producer]} :components}]
-  (controllers.dead-letter/replay! (UUID/fromString id) (:connection datomic) producer)
+  [{{:keys [id]}                 :path-params
+    {:keys [datalevin producer]} :components}]
+  (controllers.dead-letter/replay! (UUID/fromString id) datalevin producer)
   {:status 202})

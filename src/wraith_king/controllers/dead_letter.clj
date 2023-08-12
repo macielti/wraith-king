@@ -32,8 +32,8 @@
 
 (s/defn replay!
   [dead-letter-id :- s/Uuid
-   datomic
+   database-connection
    producer]
-  (let [dead-letter (datomic.dead-letter/lookup dead-letter-id datomic)]
-    (datomic.dead-letter/mask-as-processed! dead-letter datomic)
+  (let [dead-letter (database.dead-letter/lookup dead-letter-id (d/db database-connection))]
+    (database.dead-letter/mask-as-processed! dead-letter database-connection)
     (diplomat.producer/replay-dead-letter! dead-letter producer)))
