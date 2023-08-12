@@ -1,16 +1,16 @@
 (ns fixtures.dead-letter
   (:import (java.util Date)))
 
-(def deadletter-id (random-uuid))
+(def dead-letter-id (random-uuid))
 (def dropped-dead-letter-id (random-uuid))
 (def processed-dead-letter-id (random-uuid))
 (def deadletter-created-at (Date.))
 (def deadletter-updated-at (Date.))
 (def dropped-dead-letter-id (random-uuid))
-(def wire-dead-letter-id (str deadletter-id))
+(def wire-dead-letter-id (str dead-letter-id))
 
 (def internal-dead-letter
-  {:dead-letter/id             deadletter-id
+  {:dead-letter/id             dead-letter-id
    :dead-letter/service        :porteiro
    :dead-letter/topic          :porteiro.create-contact
    :dead-letter/payload        "{\"test\": \"ok\"}"

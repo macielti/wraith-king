@@ -43,3 +43,10 @@
   (d/transact database-connection [{:dead-letter/id         dead-letter-id
                                     :dead-letter/updated-at (Date.)}
                                    [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :processed :unprocessed]]))
+
+(s/defn mark-as-dropped!
+  [dead-letter-id :- s/Uuid
+   datalevin-connection]
+  (d/transact datalevin-connection [{:dead-letter/id         dead-letter-id
+                                     :dead-letter/updated-at (Date.)}
+                                    [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :unprocessed :dropped]]))
