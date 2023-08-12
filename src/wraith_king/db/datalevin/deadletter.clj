@@ -1,13 +1,14 @@
 (ns wraith-king.db.datalevin.deadletter
   (:require [datalevin.core :as d]
             [schema.core :as s]
-            [wraith-king.models.dead-letter :as models.dead-letter]))
+            [wraith-king.models.dead-letter :as models.dead-letter])
+  (:import (java.util Date)))
 
 (s/defn insert!
-  [deadletter :- models.dead-letter/DeadLetter
+  [dead-letter :- models.dead-letter/DeadLetter
    database-connection]
-  (s/validate models.dead-letter/DeadLetter deadletter)
-  (d/transact database-connection [deadletter]))
+  (s/validate models.dead-letter/DeadLetter dead-letter)
+  (d/transact database-connection [dead-letter]))
 
 (s/defn lookup :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
@@ -26,3 +27,12 @@
                  :where [?dead-letter :dead-letter/status :unprocessed]] database-snapshot)
           (->> (mapv first))
           (->> (mapv #(dissoc % :db/id)))))
+
+(s/defn mask-as-processed!
+  [{:dead-letter/keys [id replay-count] :as dead-letter} :- models.dead-letter/DeadLetter
+   database-connection]
+  (s/validate models.dead-letter/DeadLetter dead-letter)
+  (d/transact database-connection [{:dead-letter/id         id
+                                    :dead-letter/updated-at (Date.)}
+                                   [:db/cas [:dead-letter/id id] :dead-letter/status :unprocessed :processed]
+                                   [:db/cas [:dead-letter/id id] :dead-letter/replay-count replay-count (inc replay-count)]]))
