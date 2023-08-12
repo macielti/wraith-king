@@ -36,7 +36,7 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
-  [{{:keys [id]}                 :path-params
-    {:keys [datalevin producer]} :components}]
-  (controllers.dead-letter/replay! (UUID/fromString id) datalevin producer)
+  [{{:keys [id]}                          :path-params
+    {:keys [datalevin rabbitmq-producer]} :components}]
+  (controllers.dead-letter/replay! (UUID/fromString id) datalevin rabbitmq-producer)
   {:status 202})

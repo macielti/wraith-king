@@ -5,8 +5,8 @@
             [wraith-king.controllers.dead-letter :as controllers.dead-letter]))
 
 (s/defn create-dead-letter!
-  [dead-letter
-   {:keys [datalevin]}]
+  [{dead-letter         :payload
+    {:keys [datalevin]} :components}]
   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
       (controllers.dead-letter/create! datalevin)))
 
