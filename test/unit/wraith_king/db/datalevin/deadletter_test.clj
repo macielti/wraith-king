@@ -46,3 +46,14 @@
                     :dead-letter/status :processed
                     :dead-letter/updated-at (fn [update-at] (type Date) update-at))
                   (database.deadletter/lookup fixtures.dead-letter/deadletter-id (d/db database-connection)))))))
+
+(s/deftest mark-as-unprocessed-test
+  (testing "that we can revert a dead-letter status from processed to unprocessed"
+    (let [database-uri (datalevin.util/tmp-dir (str "query-or-" (random-uuid)))
+          database-connection (d/get-conn database-uri wire.datalevin.dead-letter/dead-letter-skeleton)]
+      (database.deadletter/insert! fixtures.dead-letter/internal-processed-dead-letter database-connection)
+      (database.deadletter/mark-as-unprocessed! fixtures.dead-letter/processed-dead-letter-id database-connection)
+      (is (match? (assoc fixtures.dead-letter/internal-processed-dead-letter
+                    :dead-letter/status :unprocessed
+                    :dead-letter/updated-at (fn [update-at] (type Date) update-at))
+                  (database.deadletter/lookup fixtures.dead-letter/processed-dead-letter-id (d/db database-connection)))))))
