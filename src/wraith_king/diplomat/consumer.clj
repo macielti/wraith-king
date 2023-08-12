@@ -6,9 +6,9 @@
 
 (s/defn create-dead-letter!
   [dead-letter
-   {:keys [datomic]}]
+   {:keys [datalevin]}]
   (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-      (controllers.dead-letter/create! (:connection datomic))))
+      (controllers.dead-letter/create! datalevin)))
 
 (def consumers
   {:create-dead-letter {:schema  wire.in.dead-letter/DeadLetter

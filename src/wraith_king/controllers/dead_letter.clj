@@ -1,17 +1,19 @@
 (ns wraith-king.controllers.dead-letter
-  (:require [schema.core :as s]
+  (:require [datalevin.core :as d]
+            [schema.core :as s]
             [wraith-king.models.dead-letter :as models.dead-letter]
-            [wraith-king.db.datomic.dead-letter :as datomic.dead-letter]
+            [wraith-king.db.datalevin.deadletter :as database.dead-letter]
             [wraith-king.diplomat.producer :as diplomat.producer]))
 
 (s/defn create! :- models.dead-letter/DeadLetter
   [{:dead-letter/keys [id] :as dead-letter} :- models.dead-letter/DeadLetter
-   datomic]
-  (if (= :processed (-> (datomic.dead-letter/lookup id datomic) :dead-letter/status))
-    (do (datomic.dead-letter/mark-as-unprocessed! id datomic)
-        (datomic.dead-letter/lookup id datomic))
-    (do (datomic.dead-letter/insert! dead-letter datomic)
-        dead-letter)))
+   database-connection]
+  (let [database-snapshot (d/db database-connection)]
+    (if (= :processed (-> (database.dead-letter/lookup id database-snapshot) :dead-letter/status))
+      (do (database.dead-letter/mark-as-unprocessed! id database-connection)
+          (database.dead-letter/lookup id database-snapshot))
+      (do (database.dead-letter/insert! dead-letter database-connection)
+          dead-letter))))
 
 (s/defn fetch :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid

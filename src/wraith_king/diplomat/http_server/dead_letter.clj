@@ -6,11 +6,11 @@
 
 (s/defn create!
   "Create new dead-letter"
-  [{dead-letter       :json-params
-    {:keys [datomic]} :components}]
+  [{dead-letter         :json-params
+    {:keys [datalevin]} :components}]
   {:status 201
    :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-                             (controllers.dead-letter/create! (:connection datomic))
+                             (controllers.dead-letter/create! datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch
