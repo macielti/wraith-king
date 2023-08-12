@@ -18,7 +18,7 @@
                  [com.datomic/datomic-free "0.9.5697"]
                  [nubank/matcher-combinators "3.5.0"]
                  [prismatic/schema "1.2.1"]
-                 [net.clojars.macielti/common-clj "15.18.17"]]
+                 [net.clojars.macielti/common-clj "19.30.36"]]
 
   :resource-paths ["resources" "test/resources/"]
 
@@ -27,5 +27,8 @@
   :repl-options {:init-ns wraith-king.components}
 
   :test-paths ["test/unit" "test/integration" "test/helpers"]
+
+  :jvm-opts ^:replace ["--add-opens=java.base/java.nio=ALL-UNNAMED"
+                       "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"]
 
   :main wraith-king.components/start-system!)
