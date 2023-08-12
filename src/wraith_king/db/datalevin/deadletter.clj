@@ -36,3 +36,10 @@
                                     :dead-letter/updated-at (Date.)}
                                    [:db/cas [:dead-letter/id id] :dead-letter/status :unprocessed :processed]
                                    [:db/cas [:dead-letter/id id] :dead-letter/replay-count replay-count (inc replay-count)]]))
+
+(s/defn mark-as-unprocessed!
+  [dead-letter-id :- s/Uuid
+   database-connection]
+  (d/transact database-connection [{:dead-letter/id         dead-letter-id
+                                    :dead-letter/updated-at (Date.)}
+                                   [:db/cas [:dead-letter/id dead-letter-id] :dead-letter/status :processed :unprocessed]]))
