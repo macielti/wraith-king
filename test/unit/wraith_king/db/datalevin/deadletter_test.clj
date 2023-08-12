@@ -10,7 +10,6 @@
     (let [database-uri (datalevin.util/tmp-dir (str "query-or-" (random-uuid)))
           database-connection (d/get-conn database-uri)]
       (database.deadletter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
-      (database.deadletter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
       (is (= {:dead-letter/id             fixtures.dead-letter/deadletter-id
               :dead-letter/exception-info "Critical Exception (StackTrace)"
               :dead-letter/payload        "{\"test\": \"ok\"}"
