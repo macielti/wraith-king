@@ -13,7 +13,7 @@
     (let [database-uri (datalevin.util/tmp-dir (str "query-or-" (random-uuid)))
           database-connection (d/get-conn database-uri wire.datalevin.dead-letter/dead-letter-skeleton)]
       (database.deadletter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
-      (is (= {:dead-letter/id             fixtures.dead-letter/deadletter-id
+      (is (= {:dead-letter/id             fixtures.dead-letter/dead-letter-id
               :dead-letter/exception-info "Critical Exception (StackTrace)"
               :dead-letter/payload        "{\"test\": \"ok\"}"
               :dead-letter/replay-count   0
@@ -22,7 +22,7 @@
               :dead-letter/topic          :porteiro.create-contact
               :dead-letter/created-at     fixtures.dead-letter/deadletter-created-at
               :dead-letter/updated-at     fixtures.dead-letter/deadletter-updated-at}
-             (database.deadletter/lookup fixtures.dead-letter/deadletter-id (d/db database-connection)))))))
+             (database.deadletter/lookup fixtures.dead-letter/dead-letter-id (d/db database-connection)))))))
 
 (s/deftest active-test
   (testing "that we can query all active dead-letters"
@@ -45,7 +45,7 @@
                     :dead-letter/replay-count 1
                     :dead-letter/status :processed
                     :dead-letter/updated-at (fn [update-at] (type Date) update-at))
-                  (database.deadletter/lookup fixtures.dead-letter/deadletter-id (d/db database-connection)))))))
+                  (database.deadletter/lookup fixtures.dead-letter/dead-letter-id (d/db database-connection)))))))
 
 (s/deftest mark-as-unprocessed-test
   (testing "that we can revert a dead-letter status from processed to unprocessed"
@@ -57,3 +57,14 @@
                     :dead-letter/status :unprocessed
                     :dead-letter/updated-at (fn [update-at] (type Date) update-at))
                   (database.deadletter/lookup fixtures.dead-letter/processed-dead-letter-id (d/db database-connection)))))))
+
+(s/deftest mark-as-dropped-test
+  (testing "that we can drop a unprocessed dead-letter"
+    (let [database-uri (datalevin.util/tmp-dir (str "query-or-" (random-uuid)))
+          database-connection (d/get-conn database-uri wire.datalevin.dead-letter/dead-letter-skeleton)]
+      (database.deadletter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
+      (database.deadletter/mark-as-dropped! fixtures.dead-letter/dead-letter-id database-connection)
+      (is (match? (assoc fixtures.dead-letter/internal-dead-letter
+                    :dead-letter/status :dropped
+                    :dead-letter/updated-at (fn [update-at] (type Date) update-at))
+                  (database.deadletter/lookup fixtures.dead-letter/dead-letter-id (d/db database-connection)))))))
