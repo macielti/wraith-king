@@ -14,11 +14,11 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch
-  [{{:keys [id]}      :path-params
-    {:keys [datomic]} :components}]
+  [{{:keys [id]}        :path-params
+    {:keys [datalevin]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/fetch (:connection datomic))
+                             (controllers.dead-letter/fetch datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
