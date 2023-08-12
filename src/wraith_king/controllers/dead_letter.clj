@@ -1,37 +1,39 @@
 (ns wraith-king.controllers.dead-letter
-  (:require [schema.core :as s]
+  (:require [datalevin.core :as d]
+            [schema.core :as s]
             [wraith-king.models.dead-letter :as models.dead-letter]
-            [wraith-king.db.datomic.dead-letter :as datomic.dead-letter]
+            [wraith-king.db.datalevin.deadletter :as database.dead-letter]
             [wraith-king.diplomat.producer :as diplomat.producer]))
 
 (s/defn create! :- models.dead-letter/DeadLetter
   [{:dead-letter/keys [id] :as dead-letter} :- models.dead-letter/DeadLetter
-   datomic]
-  (if (= :processed (-> (datomic.dead-letter/lookup id datomic) :dead-letter/status))
-    (do (datomic.dead-letter/mark-as-unprocessed! id datomic)
-        (datomic.dead-letter/lookup id datomic))
-    (do (datomic.dead-letter/insert! dead-letter datomic)
-        dead-letter)))
+   database-connection]
+  (let [database-snapshot (d/db database-connection)]
+    (if (= :processed (-> (database.dead-letter/lookup id database-snapshot) :dead-letter/status))
+      (do (database.dead-letter/mark-as-unprocessed! id database-connection)
+          (database.dead-letter/lookup id database-snapshot))
+      (do (database.dead-letter/insert! dead-letter database-connection)
+          dead-letter))))
 
 (s/defn fetch :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
-   datomic]
-  (datomic.dead-letter/lookup dead-letter-id datomic))
+   database-connection]
+  (database.dead-letter/lookup dead-letter-id (d/db database-connection)))
 
 (s/defn fetch-active :- [models.dead-letter/DeadLetter]
-  [datomic]
-  (datomic.dead-letter/active datomic))
+  [database-connection]
+  (database.dead-letter/active (d/db database-connection)))
 
 (s/defn drop! :- models.dead-letter/DeadLetter
   [dead-letter-id :- s/Uuid
-   datomic]
-  (datomic.dead-letter/mark-as-dropped! dead-letter-id datomic)
-  (datomic.dead-letter/lookup dead-letter-id datomic))
+   database-connection]
+  (database.dead-letter/mark-as-dropped! dead-letter-id database-connection)
+  (database.dead-letter/lookup dead-letter-id (d/db database-connection)))
 
 (s/defn replay!
   [dead-letter-id :- s/Uuid
-   datomic
+   database-connection
    producer]
-  (let [dead-letter (datomic.dead-letter/lookup dead-letter-id datomic)]
-    (datomic.dead-letter/mask-as-processed! dead-letter datomic)
+  (let [dead-letter (database.dead-letter/lookup dead-letter-id (d/db database-connection))]
+    (database.dead-letter/mask-as-processed! dead-letter database-connection)
     (diplomat.producer/replay-dead-letter! dead-letter producer)))

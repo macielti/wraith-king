@@ -6,37 +6,37 @@
 
 (s/defn create!
   "Create new dead-letter"
-  [{dead-letter       :json-params
-    {:keys [datomic]} :components}]
+  [{dead-letter         :json-params
+    {:keys [datalevin]} :components}]
   {:status 201
    :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-                             (controllers.dead-letter/create! (:connection datomic))
+                             (controllers.dead-letter/create! datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch
-  [{{:keys [id]}      :path-params
-    {:keys [datomic]} :components}]
+  [{{:keys [id]}        :path-params
+    {:keys [datalevin]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/fetch (:connection datomic))
+                             (controllers.dead-letter/fetch datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
-  [{{:keys [datomic]} :components}]
+  [{{:keys [datalevin]} :components}]
   {:status 200
-   :body   (-> (controllers.dead-letter/fetch-active (:connection datomic))
+   :body   (-> (controllers.dead-letter/fetch-active datalevin)
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
-  [{{:keys [id]}      :path-params
-    {:keys [datomic]} :components}]
+  [{{:keys [id]}        :path-params
+    {:keys [datalevin]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/drop! (:connection datomic))
+                             (controllers.dead-letter/drop! datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
-  [{{:keys [id]}               :path-params
-    {:keys [datomic producer]} :components}]
-  (controllers.dead-letter/replay! (UUID/fromString id) (:connection datomic) producer)
+  [{{:keys [id]}                          :path-params
+    {:keys [datalevin rabbitmq-producer]} :components}]
+  (controllers.dead-letter/replay! (UUID/fromString id) datalevin rabbitmq-producer)
   {:status 202})

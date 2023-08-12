@@ -4,7 +4,7 @@
             [clojure.string :as str]
             [common-clj.error.core :as common-error]
             [buddy.sign.jwt :as jwt]
-            [common-clj.io.interceptors.datomic :as io.interceptors.datomic])
+            [common-clj.io.interceptors.datalevin :as io.interceptors.datalevin])
   (:import (java.util UUID)
            (clojure.lang ExceptionInfo)))
 
@@ -50,7 +50,7 @@
   (-> path-params :id UUID/fromString))
 
 (def resource-existence-interceptor-check
-  (io.interceptors.datomic/resource-existence-check-interceptor dead-letter-resource-identifier-fn
-                                                                '[:find (pull ?resource [*])
-                                                                  :in $ ?resource-identifier
-                                                                  :where [?resource :dead-letter/id ?resource-identifier]]))
+  (io.interceptors.datalevin/resource-existence-check-interceptor dead-letter-resource-identifier-fn
+                                                                  '[:find (pull ?resource [*])
+                                                                    :in $ ?resource-identifier
+                                                                    :where [?resource :dead-letter/id ?resource-identifier]]))
