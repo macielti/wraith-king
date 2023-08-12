@@ -10,9 +10,9 @@
             [clj-uuid]
             [fixtures.dead-letter]
             [fixtures.user]
-            [schema.test :as schema-test]))
+            [schema.test :as s]))
 
-(schema-test/deftest create-dead-letter
+(s/deftest create-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)
@@ -53,28 +53,28 @@
                                               service-fn)))))
     (component/stop system)))
 
-((schema-test/deftest create-dead-letter-via-rabbitmq-message
-   (let [system (component/start components/system-test)
-         producer (component.helper/get-component-content :rabbitmq-producer system)
-         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
-         {:keys [jwt-secret]} (component.helper/get-component-content :config system)
-         token (common-auth/->token fixtures.user/user-info jwt-secret)]
+(s/deftest create-dead-letter-via-rabbitmq-message
+  (let [system (component/start components/system-test)
+        producer (component.helper/get-component-content :rabbitmq-producer system)
+        service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
+        {:keys [jwt-secret]} (component.helper/get-component-content :config system)
+        token (common-auth/->token fixtures.user/user-info jwt-secret)]
 
-     (testing "that we can create a dead-letter via rabbitmq message"
-       (component.rabbitmq.producer/produce! {:topic   :create-dead-letter
-                                              :payload fixtures.dead-letter/wire-dead-letter}
-                                             producer)
+    (testing "that we can create a dead-letter via rabbitmq message"
+      (component.rabbitmq.producer/produce! {:topic   :create-dead-letter
+                                             :payload fixtures.dead-letter/wire-dead-letter}
+                                            producer)
 
-       (Thread/sleep 5000)
+      (Thread/sleep 5000)
 
-       (is (match? {:status 200
-                    :body   [{:dead-letter {:exception-info "Critical Exception (StackTrace)"
-                                            :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
-                                            :payload        "{\"test\": \"ok\"}"
-                                            :replay-count   0
-                                            :service        "PORTEIRO"
-                                            :status         "UNPROCESSED"
-                                            :topic          "SOME_TOPIC"}}]}
-                   (http/fetch-active-dead-letters token service-fn))))
+      (is (match? {:status 200
+                   :body   [{:dead-letter {:exception-info "Critical Exception (StackTrace)"
+                                           :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
+                                           :payload        "{\"test\": \"ok\"}"
+                                           :replay-count   0
+                                           :service        "PORTEIRO"
+                                           :status         "UNPROCESSED"
+                                           :topic          "SOME_TOPIC"}}]}
+                  (http/fetch-active-dead-letters token service-fn))))
 
-     (component/stop system))))
+    (component/stop system)))
