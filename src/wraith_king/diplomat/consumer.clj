@@ -11,5 +11,5 @@
       (controllers.dead-letter/create! datalevin)))
 
 (def consumers
-  {:create-dead-letter {:schema  wire.in.dead-letter/DeadLetter
-                        :handler create-dead-letter!}})
+  {:create-dead-letter {#_:schema     #_wire.in.dead-letter/DeadLetter
+                        :handler-fn create-dead-letter!}})
