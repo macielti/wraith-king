@@ -28,11 +28,11 @@
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
-  [{{:keys [id]}      :path-params
-    {:keys [datomic]} :components}]
+  [{{:keys [id]}        :path-params
+    {:keys [datalevin]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/drop! (:connection datomic))
+                             (controllers.dead-letter/drop! datalevin)
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
