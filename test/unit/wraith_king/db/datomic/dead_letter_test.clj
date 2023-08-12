@@ -19,7 +19,7 @@
 (schema-test/deftest active-test
   (let [mocked-datomic (component.datomic/mocked-datomic datomic.config/schemas)]
     (datomic.dead-letter/insert! fixtures.dead-letter/internal-dead-letter mocked-datomic)
-    (datomic.dead-letter/insert! fixtures.dead-letter/dropped-internal-dead-letter mocked-datomic)
+    (datomic.dead-letter/insert! fixtures.dead-letter/internal-dropped-dead-letter mocked-datomic)
     (testing "that we can query all active dead-letters"
       (is (match? [fixtures.dead-letter/internal-dead-letter]
                   (datomic.dead-letter/active mocked-datomic))))
