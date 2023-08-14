@@ -1,13 +1,11 @@
 (ns wraith-king.components
   (:require [com.stuartsierra.component :as component]
             [common-clj.component.config :as component.config]
-            [common-clj.component.datomic :as component.datomic]
             [common-clj.component.routes :as component.routes]
             [common-clj.component.service :as component.service]
             [common-clj.component.datalevin :as component.datalevin]
             [common-clj.component.rabbitmq.consumer :as component.rabbitmq.consumer]
             [common-clj.component.rabbitmq.producer :as component.rabbitmq.producer]
-            [wraith-king.db.datomic.config :as datomic.config]
             [wraith-king.diplomat.http-server :as diplomat.http-server]
             [wraith-king.diplomat.consumer :as diplomat.consumer]
             [wraith-king.db.datalevin.config :as database.config]))
