@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  wraith_king:
+    image: ghcr.io/macielti/wraith-king/wraith-king:1691866647
+    container_name: global_wraith_king
+    restart: always
+    volumes:
+      - ./resources/config.edn:/usr/src/app/resources/config.edn
+    ports:
+      - "9000:9000"
+
+  tunnel:
+    container_name: cloudflared_tunnel_wraith_king
+    restart: always
+    image: cloudflare/cloudflared
+    links:
+      - wraith_king
+    command: tunnel run
+    env_file: ./tunnel.env
