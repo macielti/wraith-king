@@ -3,7 +3,8 @@
             [camel-snake-kebab.core :as camel-snake-kebab]
             [wraith-king.models.dead-letter :as models.dead-letter]
             [wraith-king.wire.in.dead-letter :as wire.in.dead-letter]
-            [wraith-king.wire.out.dead-letter :as wire.out.dead-letter])
+            [wraith-king.wire.out.dead-letter :as wire.out.dead-letter]
+            [wraith-king.wire.postgresql.dead-letter :as wire.postgresql.dead-letter])
   (:import (java.util UUID Date)))
 
 (s/defn wire->dead-letter :- models.dead-letter/DeadLetter
@@ -29,3 +30,15 @@
    :status         (camel-snake-kebab/->SCREAMING_SNAKE_CASE_STRING status)
    :created-at     (str created-at)
    :updated-at     (str updated-at)})
+
+(s/defn postgresql->internal :- models.dead-letter/DeadLetter
+  [dead-letter :- wire.postgresql.dead-letter/DeadLetter]
+  {:dead-letter/id             (:id dead-letter)
+   :dead-letter/service        (-> dead-letter :service camel-snake-kebab/->kebab-case-keyword)
+   :dead-letter/topic          (-> dead-letter :topic camel-snake-kebab/->kebab-case-keyword)
+   :dead-letter/payload        (:payload dead-letter)
+   :dead-letter/exception-info (:exception_info dead-letter)
+   :dead-letter/created-at     (:created_at dead-letter)
+   :dead-letter/updated-at     (:updated_at dead-letter)
+   :dead-letter/replay-count   (:replay_count dead-letter)
+   :dead-letter/status         (-> dead-letter :status camel-snake-kebab/->kebab-case-keyword)})

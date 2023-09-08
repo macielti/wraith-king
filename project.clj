@@ -18,7 +18,7 @@
                  [com.datomic/datomic-free "0.9.5697"]
                  [nubank/matcher-combinators "3.5.0"]
                  [prismatic/schema "1.2.1"]
-                 [net.clojars.macielti/common-clj "19.30.36"]
+                 [net.clojars.macielti/common-clj "22.35.40"]
                  [hashp "0.2.2"]]
 
   :injections [(require 'hashp.core)]

@@ -1,11 +1,19 @@
 (ns fixtures.dead-letter
-  (:import (java.util Date)))
+  (:import (java.time LocalDateTime ZoneOffset)
+           (java.util Date TimeZone)))
+
+
+(def created-at (LocalDateTime/now (.toZoneId (TimeZone/getTimeZone "UTC"))))
+(def updated-at (LocalDateTime/now (.toZoneId (TimeZone/getTimeZone "UTC"))))
+(def created-at-postgresql (-> (.toInstant created-at ZoneOffset/UTC)
+                               Date/from))
+
+(def updated-at-postgresql (-> (.toInstant updated-at ZoneOffset/UTC)
+                               Date/from))
 
 (def dead-letter-id (random-uuid))
 (def dropped-dead-letter-id (random-uuid))
 (def processed-dead-letter-id (random-uuid))
-(def deadletter-created-at (Date.))
-(def deadletter-updated-at (Date.))
 (def dropped-dead-letter-id (random-uuid))
 (def wire-dead-letter-id (str dead-letter-id))
 
@@ -37,3 +45,14 @@
    :topic         "SOME_TOPIC"
    :exceptionInfo "Critical Exception (StackTrace)"
    :payload       "{\"test\": \"ok\"}"})
+
+(def postgresql-dead-letter
+  {:id             dead-letter-id
+   :service        "PORTEIRO"
+   :topic          :porteiro.create-contact
+   :payload        "{\"test\": \"ok\"}"
+   :exception-info "Critical Exception (StackTrace)"
+   :created-at     created-at-postgresql
+   :updated-at     updated-at-postgresql
+   :replay-count   0
+   :status         :unprocessed})

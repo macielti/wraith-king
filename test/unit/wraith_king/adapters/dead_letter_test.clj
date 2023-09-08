@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [matcher-combinators.test :refer [match?]]
             [fixtures.dead-letter]
+            [schema.test :as s]
             [wraith-king.adapters.dead-letter :as adapters.dead-letter]
             [fixtures.dead-letter]
             [schema.test :as schema-test]))
@@ -35,3 +36,8 @@
                  :updated-at     string?
                  :created-at     string?}
                 (adapters.dead-letter/->wire fixtures.dead-letter/internal-dead-letter)))))
+
+(s/deftest postgresql->internal-test
+  (testing "that we can internalize a dead-letter from postgresql wire"
+    (is (match? nil
+                (adapters.dead-letter/postgresql->internal)))))
