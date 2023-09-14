@@ -15,3 +15,22 @@
                             id service topic payload exception-info created-at updated-at replay-count status']
                            {:return-keys true})
         adapters.dead-letter/postgresql->internal)))
+
+(s/defn lookup :- (s/maybe models.dead-letter/DeadLetter)
+  [dead-letter-id :- s/Uuid
+   database-connection]
+  (some-> (jdbc/execute-one! database-connection
+                             ["SELECT
+                                 id,
+                                 service,
+                                 topic,
+                                 payload,
+                                 exception_info,
+                                 created_at,
+                                 updated_at,
+                                 replay_count,
+                                 status
+                              FROM dead_letter
+                              WHERE
+                                id = ?" dead-letter-id])
+          adapters.dead-letter/postgresql->internal))

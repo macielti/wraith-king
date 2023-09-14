@@ -21,3 +21,24 @@
                    :dead-letter/status         :unprocessed}
                   (database.dead-letter/insert! fixtures.dead-letter/internal-dead-letter database-connection))))
     (.stop ^GenericContainer postgresql-container)))
+
+(s/deftest lookup-test
+  (let [{:keys [database-connection
+                postgresql-container]} (component.postgresql/postgresql-for-unit-tests "resources/schema.sql")]
+    (testing "That we can query dead-letter entity by its id"
+
+      (database.dead-letter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
+
+      (is (match? {:dead-letter/id             fixtures.dead-letter/dead-letter-id
+                   :dead-letter/topic          fixtures.dead-letter/topic
+                   :dead-letter/created-at     common-clj.time.core/local-datetime?
+                   :dead-letter/updated-at     common-clj.time.core/local-datetime?
+                   :dead-letter/exception-info fixtures.dead-letter/exception-info
+                   :dead-letter/payload        fixtures.dead-letter/dead-letter-payload
+                   :dead-letter/replay-count   0
+                   :dead-letter/status         :unprocessed}
+                  (database.dead-letter/lookup fixtures.dead-letter/dead-letter-id database-connection)))
+
+      (is (match? nil?
+                  (database.dead-letter/lookup (random-uuid) database-connection))))
+    (.stop ^GenericContainer postgresql-container)))
