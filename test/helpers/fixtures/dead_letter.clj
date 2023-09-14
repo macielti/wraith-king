@@ -11,13 +11,17 @@
 (def processed-dead-letter-id (random-uuid))
 (def dropped-dead-letter-id (random-uuid))
 (def wire-dead-letter-id (str dead-letter-id))
+(def service "porteiro")
+(def topic "porteiro.create-contact")
+(def dead-letter-payload "{\"test\": \"ok\"}")
+(def exception-info "Critical Exception (StackTrace)")
 
 (def internal-dead-letter
   {:dead-letter/id             dead-letter-id
-   :dead-letter/service        :porteiro
-   :dead-letter/topic          :porteiro.create-contact
-   :dead-letter/payload        "{\"test\": \"ok\"}"
-   :dead-letter/exception-info "Critical Exception (StackTrace)"
+   :dead-letter/service        service
+   :dead-letter/topic          topic
+   :dead-letter/payload        dead-letter-payload
+   :dead-letter/exception-info exception-info
    :dead-letter/created-at     created-at
    :dead-letter/updated-at     updated-at
    :dead-letter/replay-count   0
