@@ -1,16 +1,11 @@
 (ns fixtures.dead-letter
-  (:import (java.time LocalDateTime ZoneOffset)
-           (java.util Date TimeZone)))
+  (:require [common-clj.time.core :as time]))
 
 
-(def created-at (LocalDateTime/now (.toZoneId (TimeZone/getTimeZone "UTC"))))
-(def updated-at (LocalDateTime/now (.toZoneId (TimeZone/getTimeZone "UTC"))))
-(def created-at-postgresql (-> (.toInstant created-at ZoneOffset/UTC)
-                               Date/from))
-
-(def updated-at-postgresql (-> (.toInstant updated-at ZoneOffset/UTC)
-                               Date/from))
-
+(def created-at (time/now))
+(def updated-at (time/now))
+(def created-at-postgresql (time/local-datetime->date created-at))
+(def updated-at-postgresql (time/local-datetime->date updated-at))
 (def dead-letter-id (random-uuid))
 (def dropped-dead-letter-id (random-uuid))
 (def processed-dead-letter-id (random-uuid))
@@ -23,8 +18,8 @@
    :dead-letter/topic          :porteiro.create-contact
    :dead-letter/payload        "{\"test\": \"ok\"}"
    :dead-letter/exception-info "Critical Exception (StackTrace)"
-   :dead-letter/created-at     deadletter-created-at
-   :dead-letter/updated-at     deadletter-updated-at
+   :dead-letter/created-at     created-at
+   :dead-letter/updated-at     updated-at
    :dead-letter/replay-count   0
    :dead-letter/status         :unprocessed})
 
@@ -48,11 +43,11 @@
 
 (def postgresql-dead-letter
   {:id             dead-letter-id
-   :service        "PORTEIRO"
-   :topic          :porteiro.create-contact
+   :service        "porteiro"
+   :topic          "porteiro.create-contact"
    :payload        "{\"test\": \"ok\"}"
-   :exception-info "Critical Exception (StackTrace)"
-   :created-at     created-at-postgresql
-   :updated-at     updated-at-postgresql
-   :replay-count   0
-   :status         :unprocessed})
+   :exception_info "Critical Exception (StackTrace)"
+   :created_at     created-at-postgresql
+   :updated_at     updated-at-postgresql
+   :replay_count   0
+   :status         "UNPROCESSED"})
