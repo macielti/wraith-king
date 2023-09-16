@@ -16,7 +16,7 @@
 (s/defn fetch :- (s/maybe models.dead-letter/DeadLetter)
   [dead-letter-id :- s/Uuid
    database-connection]
-  (datomic-database.dead-letter/lookup dead-letter-id (d/db database-connection)))
+  (database.dead-letter/lookup dead-letter-id database-connection))
 
 (s/defn fetch-active :- [models.dead-letter/DeadLetter]
   [database-connection]

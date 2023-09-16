@@ -15,10 +15,10 @@
 
 (s/defn fetch
   [{{:keys [id]}        :path-params
-    {:keys [datalevin]} :components}]
+    {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/fetch datalevin)
+                             (controllers.dead-letter/fetch postgresql)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
