@@ -1,22 +1,29 @@
 (ns fixtures.dead-letter
-  (:import (java.util Date)))
+  (:require [common-clj.time.core :as time]))
 
+
+(def created-at (time/now))
+(def updated-at (time/now))
+(def created-at-postgresql (time/local-datetime->date created-at))
+(def updated-at-postgresql (time/local-datetime->date updated-at))
 (def dead-letter-id (random-uuid))
 (def dropped-dead-letter-id (random-uuid))
 (def processed-dead-letter-id (random-uuid))
-(def deadletter-created-at (Date.))
-(def deadletter-updated-at (Date.))
 (def dropped-dead-letter-id (random-uuid))
 (def wire-dead-letter-id (str dead-letter-id))
+(def service "porteiro")
+(def topic "porteiro.create-contact")
+(def dead-letter-payload "{\"test\": \"ok\"}")
+(def exception-info "Critical Exception (StackTrace)")
 
 (def internal-dead-letter
   {:dead-letter/id             dead-letter-id
-   :dead-letter/service        :porteiro
-   :dead-letter/topic          :porteiro.create-contact
-   :dead-letter/payload        "{\"test\": \"ok\"}"
-   :dead-letter/exception-info "Critical Exception (StackTrace)"
-   :dead-letter/created-at     deadletter-created-at
-   :dead-letter/updated-at     deadletter-updated-at
+   :dead-letter/service        service
+   :dead-letter/topic          topic
+   :dead-letter/payload        dead-letter-payload
+   :dead-letter/exception-info exception-info
+   :dead-letter/created-at     created-at
+   :dead-letter/updated-at     updated-at
    :dead-letter/replay-count   0
    :dead-letter/status         :unprocessed})
 
@@ -34,6 +41,17 @@
 
 (def wire-dead-letter
   {:service       "PORTEIRO"
-   :topic         "SOME_TOPIC"
+   :topic         "porteiro.create-contact"
    :exceptionInfo "Critical Exception (StackTrace)"
    :payload       "{\"test\": \"ok\"}"})
+
+(def postgresql-dead-letter
+  {:id             dead-letter-id
+   :service        "porteiro"
+   :topic          "porteiro.create-contact"
+   :payload        "{\"test\": \"ok\"}"
+   :exception_info "Critical Exception (StackTrace)"
+   :created_at     created-at-postgresql
+   :updated_at     updated-at-postgresql
+   :replay_count   0
+   :status         "UNPROCESSED"})

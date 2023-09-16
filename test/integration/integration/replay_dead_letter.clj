@@ -8,10 +8,9 @@
             [matcher-combinators.test :refer [match?]]
             [fixtures.dead-letter]
             [fixtures.user]
-            [common-clj.component.rabbitmq.producer :as component.rabbitmq.producer]
             [schema.test :as schema-test]))
 
-(schema-test/deftest create-dead-letter
+(schema-test/deftest replay-dead-letter
   (let [system (component/start components/system-test)
         producer (component.helper/get-component-content :rabbitmq-producer system)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
@@ -25,7 +24,7 @@
                                             service-fn)))
 
       (testing "that when we replay a dead-letter, the message is reproduced"
-        (is (match? [{:topic :some-topic
+        (is (match? [{:topic   :porteiro.create-contact
                       :payload {:test "ok"}}]
                     @(:produced-messages producer)))))
 
@@ -33,7 +32,7 @@
       (is (match? {:status 404
                    :body   {:error   "resource-not-found"
                             :message "Resource could not be found"
-                            :detail  "Not Found"}}
+                            :detail  "DeadLetter Not Found"}}
                   (http/replay-dead-letter! (random-uuid)
                                             token
                                             service-fn))))
