@@ -42,3 +42,15 @@
       (is (match? nil?
                   (database.dead-letter/lookup (random-uuid) database-connection))))
     (.stop ^GenericContainer postgresql-container)))
+
+;TODO: Check if :updated-at was really updated
+(s/deftest mark-as-unprocessed-test
+  (let [{:keys [database-connection
+                postgresql-container]} (component.postgresql/postgresql-for-unit-tests "resources/schema.sql")]
+    (testing "That we can mark a dead-letter entity as unprocessed"
+      (is (match? {:dead-letter/status :processed}
+                  (database.dead-letter/insert! (assoc fixtures.dead-letter/internal-dead-letter
+                                                  :dead-letter/status :processed) database-connection)))
+      (is (match? {:dead-letter/status :unprocessed}
+                  (database.dead-letter/mark-as-unprocessed! fixtures.dead-letter/dead-letter-id database-connection))))
+    (.stop ^GenericContainer postgresql-container)))

@@ -6,11 +6,11 @@
 
 (s/defn create!
   "Create new dead-letter"
-  [{dead-letter         :json-params
-    {:keys [datalevin]} :components}]
+  [{dead-letter          :json-params
+    {:keys [postgresql]} :components}]
   {:status 201
    :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-                             (controllers.dead-letter/create! datalevin)
+                             (controllers.dead-letter/create! postgresql)
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch

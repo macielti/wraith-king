@@ -11,8 +11,8 @@
 (s/defn wire->dead-letter :- models.dead-letter/DeadLetter
   [{:keys [service topic exceptionInfo payload]} :- wire.in.dead-letter/DeadLetter]
   {:dead-letter/id             (UUID/nameUUIDFromBytes (.getBytes (str service topic exceptionInfo payload)))
-   :dead-letter/service        (camel-snake-kebab/->kebab-case-keyword service)
-   :dead-letter/topic          (camel-snake-kebab/->kebab-case-keyword topic)
+   :dead-letter/service        service
+   :dead-letter/topic          topic
    :dead-letter/exception-info exceptionInfo
    :dead-letter/payload        payload
    :dead-letter/status         :unprocessed
@@ -23,8 +23,8 @@
 (s/defn ->wire :- wire.out.dead-letter/DeadLetter
   [{:dead-letter/keys [id service topic exception-info payload replay-count status created-at updated-at]} :- models.dead-letter/DeadLetter]
   {:id             (str id)
-   :service        (camel-snake-kebab/->SCREAMING_SNAKE_CASE_STRING service)
-   :topic          (camel-snake-kebab/->SCREAMING_SNAKE_CASE_STRING)
+   :service        service
+   :topic          topic
    :exception-info exception-info
    :payload        payload
    :replay-count   replay-count

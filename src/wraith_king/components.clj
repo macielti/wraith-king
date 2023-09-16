@@ -13,7 +13,7 @@
 (def system
   (component/system-map
     :config (component.config/new-config "resources/config.edn" :prod :edn)
-    :postgresql (component/using (component.postgresql/new-postgreslq) [:config])
+    :postgresql (component/using (component.postgresql/new-postgresql) [:config])
     :routes (component.routes/new-routes diplomat.http-server/routes)
     :rabbitmq-consumer (component/using (component.rabbitmq.consumer/new-consumer diplomat.consumer/consumers) [:config :postgresql])
     :rabbitmq-producer (component/using (component.rabbitmq.producer/new-producer) [:config])

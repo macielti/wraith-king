@@ -1,5 +1,6 @@
 (ns wraith-king.db.postgresql.dead-letter
   (:require [camel-snake-kebab.core :as camel-snake-kebab]
+            [common-clj.time.core :as time]
             [next.jdbc :as jdbc]
             [schema.core :as s]
             [wraith-king.models.dead-letter :as models.dead-letter]
@@ -34,3 +35,16 @@
                               WHERE
                                 id = ?" dead-letter-id])
           adapters.dead-letter/postgresql->internal))
+
+(s/defn mark-as-unprocessed!
+  [dead-letter-id :- s/Uuid
+   database-connection]
+  (-> (jdbc/execute-one! database-connection
+                         ["UPDATE dead_letter
+                           SET
+                             status = ?,
+                             updated_at = ?
+                           WHERE id = ?"
+                          "UNPROCESSED" (time/now) dead-letter-id]
+                         {:return-keys true})
+      adapters.dead-letter/postgresql->internal))
