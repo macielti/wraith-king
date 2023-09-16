@@ -48,3 +48,23 @@
                           "UNPROCESSED" (time/now) dead-letter-id]
                          {:return-keys true})
       adapters.dead-letter/postgresql->internal))
+
+(s/defn active :- [models.dead-letter/DeadLetter]
+  "Fetch dead-letters that are not dropped and were not successfully processed"
+  [database-connection]
+  (some->> (jdbc/execute! database-connection
+                          ["SELECT
+                                 id,
+                                 service,
+                                 topic,
+                                 payload,
+                                 exception_info,
+                                 created_at,
+                                 updated_at,
+                                 replay_count,
+                                 status
+                           FROM dead_letter
+                           WHERE
+                             status = ?"
+                           "UNPROCESSED"])
+           (mapv adapters.dead-letter/postgresql->internal)))
