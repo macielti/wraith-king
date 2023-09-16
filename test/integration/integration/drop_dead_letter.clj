@@ -11,7 +11,7 @@
             [fixtures.dead-letter]
             [schema.test :as schema-test]))
 
-(schema-test/deftest create-dead-letter
+(schema-test/deftest drop-dead-letter
   (let [system (component/start components/system-test)
         service-fn (:io.pedestal.http/service-fn (component.helper/get-component-content :service system))
         {:keys [jwt-secret]} (component.helper/get-component-content :config system)
@@ -23,7 +23,7 @@
       (is (match? {:status 201
                    :body   {:dead-letter {:service        "PORTEIRO"
                                           :payload        "{\"test\": \"ok\"}"
-                                          :topic          "SOME_TOPIC"
+                                          :topic          "porteiro.create-contact"
                                           :status         "UNPROCESSED"
                                           :id             clj-uuid/uuid-string?
                                           :replay-count   0
@@ -46,7 +46,7 @@
       (is (= {:status 404
               :body   {:error   "resource-not-found",
                        :message "Resource could not be found",
-                       :detail  "Not Found"}}
+                       :detail  "DeadLetter Not Found"}}
              (http/drop-dead-letter! (random-uuid)
                                      token
                                      service-fn))))

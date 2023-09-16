@@ -21,7 +21,7 @@
     {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/fetch postgresql)
+                             (controllers.dead-letter/fetch (component.postgresql/get-connection postgresql))
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
@@ -35,7 +35,7 @@
     {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/drop! postgresql)
+                             (controllers.dead-letter/drop! (component.postgresql/get-connection postgresql))
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
@@ -45,5 +45,5 @@
                                         (component.postgresql/get-connection postgresql)
                                         rabbitmq-producer)
        (catch Exception ex
-         ex))
+         #p ex))
   {:status 202})

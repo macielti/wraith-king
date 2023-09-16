@@ -41,7 +41,7 @@
 
 (def wire-dead-letter
   {:service       "PORTEIRO"
-   :topic         "SOME_TOPIC"
+   :topic         "porteiro.create-contact"
    :exceptionInfo "Critical Exception (StackTrace)"
    :payload       "{\"test\": \"ok\"}"})
 

@@ -7,6 +7,6 @@
 (s/defn replay-dead-letter!
   [{:dead-letter/keys [topic payload]} :- models.dead-letter/DeadLetter
    producer]
-  (rabbitmq.producer/produce! {:topic   topic
+  (rabbitmq.producer/produce! {:topic   (keyword topic)
                                :payload (json/decode payload true)}
                               producer))

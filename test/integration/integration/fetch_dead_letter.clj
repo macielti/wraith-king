@@ -21,7 +21,7 @@
       (is (match? {:status 404
                    :body   {:error   "resource-not-found"
                             :message "Resource could not be found"
-                            :detail  "Not Found"}}
+                            :detail  "DeadLetter Not Found"}}
                   (http/fetch-dead-letter-by-its-id (test.helper/uuid)
                                                     token
                                                     service-fn))))
@@ -29,7 +29,7 @@
       (is (match? {:status 200
                    :body   {:dead-letter {:service        "PORTEIRO"
                                           :payload        "{\"test\": \"ok\"}"
-                                          :topic          "SOME_TOPIC"
+                                          :topic          "porteiro.create-contact"
                                           :status         "UNPROCESSED"
                                           :id             clj-uuid/uuid-string?
                                           :replay-count   0
@@ -44,7 +44,7 @@
       (is (match? {:status 200
                    :body   [{:dead-letter {:service        "PORTEIRO"
                                            :payload        "{\"test\": \"ok\"}"
-                                           :topic          "SOME_TOPIC"
+                                           :topic          "porteiro.create-contact"
                                            :status         "UNPROCESSED"
                                            :id             clj-uuid/uuid-string?
                                            :replay-count   0

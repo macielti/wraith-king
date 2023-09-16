@@ -16,12 +16,12 @@
                  :dead-letter/updated-at     time/local-datetime?
                  :dead-letter/exception-info "Critical Exception (StackTrace)"
                  :dead-letter/status         :unprocessed
-                 :dead-letter/topic          "SOME_TOPIC"
+                 :dead-letter/topic          "porteiro.create-contact"
                  :dead-letter/payload        "{\"test\": \"ok\"}"}
                 (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter))))
 
   (testing "the same wire dead-letter input always produce dead-letters with the same id"
-    (is (match? {:dead-letter/id #uuid "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"}
+    (is (match? {:dead-letter/id #uuid "213e1569-e1e3-35dd-be17-c3b8a216d19e"}
                 (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter)))))
 
 (s/deftest ->wire-test

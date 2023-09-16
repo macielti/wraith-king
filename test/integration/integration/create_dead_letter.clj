@@ -22,7 +22,7 @@
       (is (match? {:status 201
                    :body   {:dead-letter {:service        "PORTEIRO"
                                           :payload        "{\"test\": \"ok\"}"
-                                          :topic          "SOME_TOPIC"
+                                          :topic          "porteiro.create-contact"
                                           :status         "UNPROCESSED"
                                           :id             clj-uuid/uuid-string?
                                           :replay-count   0
@@ -41,7 +41,7 @@
         (is (match? {:status 201
                      :body   {:dead-letter {:service        "PORTEIRO"
                                             :payload        "{\"test\": \"ok\"}"
-                                            :topic          "SOME_TOPIC"
+                                            :topic          "porteiro.create-contact"
                                             :status         "UNPROCESSED"
                                             :id             clj-uuid/uuid-string?
                                             :replay-count   1
@@ -69,12 +69,12 @@
 
       (is (match? {:status 200
                    :body   [{:dead-letter {:exception-info "Critical Exception (StackTrace)"
-                                           :id             "eba6c1aa-9409-3a5d-ab2f-b4a4cc5b14b8"
+                                           :id             "213e1569-e1e3-35dd-be17-c3b8a216d19e"
                                            :payload        "{\"test\": \"ok\"}"
                                            :replay-count   0
                                            :service        "PORTEIRO"
                                            :status         "UNPROCESSED"
-                                           :topic          "SOME_TOPIC"}}]}
+                                           :topic          "porteiro.create-contact"}}]}
                   (http/fetch-active-dead-letters token service-fn))))
 
     (component/stop system)))
