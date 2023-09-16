@@ -25,8 +25,7 @@
 (s/defn drop! :- models.dead-letter/DeadLetter
   [dead-letter-id :- s/Uuid
    database-connection]
-  (datomic-database.dead-letter/mark-as-dropped! dead-letter-id database-connection)
-  (datomic-database.dead-letter/lookup dead-letter-id (d/db database-connection)))
+  (database.dead-letter/mark-as-dropped! dead-letter-id database-connection))
 
 (s/defn replay!
   [dead-letter-id :- s/Uuid
