@@ -68,3 +68,18 @@
                              status = ?"
                            "UNPROCESSED"])
            (mapv adapters.dead-letter/postgresql->internal)))
+
+(s/defn mark-as-dropped!
+  [dead-letter-id :- s/Uuid
+   database-connection]
+  (-> (jdbc/execute-one! database-connection
+                         ["UPDATE dead_letter
+                           SET
+                             status = ?,
+                             updated_at = ?
+                           WHERE
+                             id = ?
+                             AND status = ?"
+                          "DROPPED" (time/now) dead-letter-id "UNPROCESSED"]
+                         {:return-keys true})
+      adapters.dead-letter/postgresql->internal))

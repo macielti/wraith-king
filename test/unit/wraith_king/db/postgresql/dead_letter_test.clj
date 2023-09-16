@@ -63,3 +63,12 @@
       (is (match? [{:dead-letter/status :unprocessed}]
                   (database.dead-letter/active database-connection))))
     (.stop ^GenericContainer postgresql-container)))
+
+(s/deftest mark-as-dropped-test
+  (let [{:keys [database-connection
+                postgresql-container]} (component.postgresql/postgresql-for-unit-tests "resources/schema.sql")]
+    (database.dead-letter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
+    (testing "That we can drop a unprocessed dead letter"
+      (is (match? {:dead-letter/status :dropped}
+                  (database.dead-letter/mark-as-dropped! fixtures.dead-letter/dead-letter-id database-connection))))
+    (.stop ^GenericContainer postgresql-container)))

@@ -29,10 +29,10 @@
 
 (s/defn drop!
   [{{:keys [id]}        :path-params
-    {:keys [datalevin]} :components}]
+    {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
-                             (controllers.dead-letter/drop! datalevin)
+                             (controllers.dead-letter/drop! postgresql)
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
