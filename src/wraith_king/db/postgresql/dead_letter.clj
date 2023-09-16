@@ -83,3 +83,20 @@
                           "DROPPED" (time/now) dead-letter-id "UNPROCESSED"]
                          {:return-keys true})
       adapters.dead-letter/postgresql->internal))
+
+(s/defn mask-as-processed!
+  [{:dead-letter/keys [id replay-count]} :- models.dead-letter/DeadLetter
+   database-connection]
+  (-> (jdbc/execute-one! database-connection
+                         ["UPDATE dead_letter
+                           SET
+                             status = ?,
+                             updated_at = ?,
+                             replay_count = ?
+                           WHERE
+                             id = ?
+                             AND status = ?
+                             AND replay_count = ?"
+                          "PROCESSED" (time/now) (inc replay-count) id "UNPROCESSED" replay-count]
+                         {:return-keys true})
+      adapters.dead-letter/postgresql->internal))

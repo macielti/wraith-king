@@ -14,7 +14,7 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch
-  [{{:keys [id]}        :path-params
+  [{{:keys [id]}         :path-params
     {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
@@ -28,7 +28,7 @@
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
-  [{{:keys [id]}        :path-params
+  [{{:keys [id]}         :path-params
     {:keys [postgresql]} :components}]
   {:status 200
    :body   {:dead-letter (-> (UUID/fromString id)
@@ -36,7 +36,7 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn replay!
-  [{{:keys [id]}                          :path-params
-    {:keys [datalevin rabbitmq-producer]} :components}]
-  (controllers.dead-letter/replay! (UUID/fromString id) datalevin rabbitmq-producer)
+  [{{:keys [id]}                           :path-params
+    {:keys [postgresql rabbitmq-producer]} :components}]
+  (controllers.dead-letter/replay! (UUID/fromString id) postgresql rabbitmq-producer)
   {:status 202})

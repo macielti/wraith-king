@@ -64,6 +64,7 @@
                   (database.dead-letter/active database-connection))))
     (.stop ^GenericContainer postgresql-container)))
 
+;TODO: Check if :updated-at was really updated
 (s/deftest mark-as-dropped-test
   (let [{:keys [database-connection
                 postgresql-container]} (component.postgresql/postgresql-for-unit-tests "resources/schema.sql")]
@@ -71,4 +72,15 @@
     (testing "That we can drop a unprocessed dead letter"
       (is (match? {:dead-letter/status :dropped}
                   (database.dead-letter/mark-as-dropped! fixtures.dead-letter/dead-letter-id database-connection))))
+    (.stop ^GenericContainer postgresql-container)))
+
+;TODO: Check if :updated-at was really updated
+(s/deftest mask-as-processed!-test
+  (let [{:keys [database-connection
+                postgresql-container]} (component.postgresql/postgresql-for-unit-tests "resources/schema.sql")]
+    (database.dead-letter/insert! fixtures.dead-letter/internal-dead-letter database-connection)
+    (testing "that we can mark a dead letter as processed"
+      (is (match? {:dead-letter/status       :processed
+                   :dead-letter/replay-count 1}
+                  (database.dead-letter/mask-as-processed! fixtures.dead-letter/internal-dead-letter database-connection))))
     (.stop ^GenericContainer postgresql-container)))
