@@ -10,13 +10,13 @@
 (s/deftest wire->dead-letter-test
   (testing "that we can adapt wire to a internal dead-letter entity"
     (is (match? {:dead-letter/id             uuid?
-                 :dead-letter/service        :porteiro
+                 :dead-letter/service        "PORTEIRO"
                  :dead-letter/replay-count   0
                  :dead-letter/created-at     time/local-datetime?
                  :dead-letter/updated-at     time/local-datetime?
                  :dead-letter/exception-info "Critical Exception (StackTrace)"
                  :dead-letter/status         :unprocessed
-                 :dead-letter/topic          :some-topic
+                 :dead-letter/topic          "SOME_TOPIC"
                  :dead-letter/payload        "{\"test\": \"ok\"}"}
                 (adapters.dead-letter/wire->dead-letter fixtures.dead-letter/wire-dead-letter))))
 
@@ -27,10 +27,10 @@
 (s/deftest ->wire-test
   (testing "that we can externalize a internal dead-letter entity"
     (is (match? {:id             fixtures.dead-letter/wire-dead-letter-id
-                 :service        "PORTEIRO"
+                 :service        "porteiro"
                  :payload        "{\"test\": \"ok\"}"
                  :exception-info "Critical Exception (StackTrace)"
-                 :topic          "PORTEIRO.CREATE_CONTACT"
+                 :topic          "porteiro.create-contact"
                  :status         "UNPROCESSED"
                  :replay-count   0
                  :updated-at     string?

@@ -1,6 +1,7 @@
 (ns wraith-king.diplomat.http-server
   (:require [wraith-king.diplomat.http-server.dead-letter :as diplomat.http-server.dead-letter]
-            [wraith-king.interceptors.user-identity :as interceptors.user-identity]))
+            [wraith-king.interceptors.user-identity :as interceptors.user-identity]
+            [wraith-king.interceptors.dead-letters :as interceptors.dead-letters]))
 
 (def routes [["/api/dead-letters" :post [interceptors.user-identity/user-identity-interceptor
                                          (interceptors.user-identity/user-required-roles-interceptor [:admin])
@@ -10,13 +11,13 @@
                                         diplomat.http-server.dead-letter/fetch-active] :route-name :fetch-active-dead-letters]
              ["/api/dead-letters/:id" :get [interceptors.user-identity/user-identity-interceptor
                                             (interceptors.user-identity/user-required-roles-interceptor [:admin])
-                                            interceptors.user-identity/resource-existence-interceptor-check
+                                            interceptors.dead-letters/resource-existence-interceptor-check
                                             diplomat.http-server.dead-letter/fetch] :route-name :fetch-dead-letter-by-id]
              ["/api/dead-letters/:id" :post [interceptors.user-identity/user-identity-interceptor
                                              (interceptors.user-identity/user-required-roles-interceptor [:admin])
-                                             interceptors.user-identity/resource-existence-interceptor-check
+                                             interceptors.dead-letters/resource-existence-interceptor-check
                                              diplomat.http-server.dead-letter/replay!] :route-name :replay-dead-letter-by-id]
              ["/api/dead-letters/:id" :delete [interceptors.user-identity/user-identity-interceptor
                                                (interceptors.user-identity/user-required-roles-interceptor [:admin])
-                                               interceptors.user-identity/resource-existence-interceptor-check
+                                               interceptors.dead-letters/resource-existence-interceptor-check
                                                diplomat.http-server.dead-letter/drop!] :route-name :drop-dead-letter]])

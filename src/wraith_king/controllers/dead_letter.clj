@@ -1,8 +1,6 @@
 (ns wraith-king.controllers.dead-letter
-  (:require [datalevin.core :as d]
-            [schema.core :as s]
+  (:require [schema.core :as s]
             [wraith-king.models.dead-letter :as models.dead-letter]
-            [wraith-king.db.datalevin.deadletter :as datomic-database.dead-letter]
             [wraith-king.db.postgresql.dead-letter :as database.dead-letter]
             [wraith-king.diplomat.producer :as diplomat.producer]))
 

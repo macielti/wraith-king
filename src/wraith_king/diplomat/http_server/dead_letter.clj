@@ -1,17 +1,20 @@
 (ns wraith-king.diplomat.http-server.dead-letter
   (:require [schema.core :as s]
             [wraith-king.controllers.dead-letter :as controllers.dead-letter]
-            [wraith-king.adapters.dead-letter :as adapters.dead-letter])
+            [wraith-king.adapters.dead-letter :as adapters.dead-letter]
+            [common-clj.component.postgresql :as component.postgresql])
   (:import (java.util UUID)))
 
 (s/defn create!
   "Create new dead-letter"
   [{dead-letter          :json-params
     {:keys [postgresql]} :components}]
-  {:status 201
-   :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
-                             (controllers.dead-letter/create! postgresql)
-                             adapters.dead-letter/->wire)}})
+  (try {:status 201
+        :body   {:dead-letter (-> (adapters.dead-letter/wire->dead-letter dead-letter)
+                                  (controllers.dead-letter/create! (component.postgresql/get-connection postgresql))
+                                  adapters.dead-letter/->wire)}}
+       (catch Exception ex
+         ex)))
 
 (s/defn fetch
   [{{:keys [id]}         :path-params
@@ -24,7 +27,7 @@
 (s/defn fetch-active
   [{{:keys [postgresql]} :components}]
   {:status 200
-   :body   (-> (controllers.dead-letter/fetch-active postgresql)
+   :body   (-> (controllers.dead-letter/fetch-active (component.postgresql/get-connection postgresql))
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
@@ -38,5 +41,9 @@
 (s/defn replay!
   [{{:keys [id]}                           :path-params
     {:keys [postgresql rabbitmq-producer]} :components}]
-  (controllers.dead-letter/replay! (UUID/fromString id) postgresql rabbitmq-producer)
+  (try (controllers.dead-letter/replay! (UUID/fromString id)
+                                        (component.postgresql/get-connection postgresql)
+                                        rabbitmq-producer)
+       (catch Exception ex
+         ex))
   {:status 202})
