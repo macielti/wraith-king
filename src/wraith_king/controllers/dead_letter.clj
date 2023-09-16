@@ -20,7 +20,7 @@
 
 (s/defn fetch-active :- [models.dead-letter/DeadLetter]
   [database-connection]
-  (datomic-database.dead-letter/active (d/db database-connection)))
+  (database.dead-letter/active database-connection))
 
 (s/defn drop! :- models.dead-letter/DeadLetter
   [dead-letter-id :- s/Uuid

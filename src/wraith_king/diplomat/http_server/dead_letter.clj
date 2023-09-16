@@ -22,9 +22,9 @@
                              adapters.dead-letter/->wire)}})
 
 (s/defn fetch-active
-  [{{:keys [datalevin]} :components}]
+  [{{:keys [postgresql]} :components}]
   {:status 200
-   :body   (-> (controllers.dead-letter/fetch-active datalevin)
+   :body   (-> (controllers.dead-letter/fetch-active postgresql)
                (->> (map #(do {:dead-letter (adapters.dead-letter/->wire %)}))))})
 
 (s/defn drop!
